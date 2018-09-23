@@ -1,67 +1,90 @@
 #include <iostream>
 #include <Windows.h>
+#include <Windowsx.h>
 #include <tchar.h>
 const TCHAR* WindowClassName = _T("Mda");
 const int CellSize = 30;
+const int CircleRadius = 15;
 COLORREF BackGroundColor = RGB(0, 0, 255);
 HPEN RedPen;
+
 void RunNotepad()
 {
 	STARTUPINFO sInfo;
 	PROCESS_INFORMATION pInfo;
 	ZeroMemory(&sInfo, sizeof(STARTUPINFO));
-	puts("Starting Notepad...");
 	CreateProcess(_T("C:\\Windows\\Notepad.exe"),
 		NULL, NULL, NULL, FALSE, 0, NULL, NULL, &sInfo, &pInfo);
 }
 
-LRESULT CALLBACK WndProc(HWND hWindow, UINT msg, WPARAM wParam, LPARAM lParam) {
+void PaintCircle(HDC handleDC, int x, int y) {
+	HBRUSH handleBrush = CreateSolidBrush(RGB(255, 255, 0));
+	SelectObject(handleDC, handleBrush);
+	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);
+}
+
+void GridPainting(HWND handleWindow) {
+	PAINTSTRUCT paintStruct;
+	RECT windowRectangle;
+	HDC handleDC = BeginPaint(handleWindow, &paintStruct);
+	SelectObject(handleDC, RedPen);
+	GetClientRect(handleWindow, &windowRectangle);
+	for (int i = 0; i < windowRectangle.bottom / CellSize + 1; i++) {
+		MoveToEx(handleDC, 0, i  * CellSize, NULL);
+		LineTo(handleDC, windowRectangle.right, i  * CellSize);
+	}
+	for (int i = 0; i < windowRectangle.right / CellSize + 1; i++) {
+		MoveToEx(handleDC, i  * CellSize, 0, NULL);
+		LineTo(handleDC, i  * CellSize, windowRectangle.bottom);
+	}
+	EndPaint(handleWindow, &paintStruct);
+	DeleteObject(handleDC);
+}
+
+LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg)
 	{
+	case WM_LBUTTONDOWN:
+	{
+		HDC hDC = GetDC(handleWindow);
+		int clickX = GET_X_LPARAM(lParam);
+		int clickY = GET_Y_LPARAM(lParam);
+		PaintCircle(hDC, clickX, clickY);
+		break;
+	};
+	case WM_DESTROY:
+		PostQuitMessage(0);
+		return 0;
 	case WM_HOTKEY:
 		if (wParam <= 1) {
 			PostQuitMessage(0);
+			return 0;
 		}
 		else if (wParam == 2) {
 			RunNotepad();
 		}
 		else {
 			BackGroundColor = RGB(rand() % 256, rand() % 256, rand() % 256);
-			InvalidateRect(hWindow, NULL, TRUE);
+			InvalidateRect(handleWindow, NULL, TRUE);
 		}
 		break;
-	case WM_PAINT: {
-		PAINTSTRUCT paintStruct;
-		RECT windowRectangle;
-		HDC handleDC = BeginPaint(hWindow, &paintStruct);
-		SelectObject(handleDC, RedPen);
-		GetClientRect(hWindow, &windowRectangle);
-		for (int i = 0; i < windowRectangle.bottom / CellSize + 1; i++) {
-			MoveToEx(handleDC, 0, i  * CellSize, NULL);
-			LineTo(handleDC, windowRectangle.right, i  * CellSize);
-		}
-		for (int i = 0; i < windowRectangle.right / CellSize + 1; i++) {
-			MoveToEx(handleDC, i  * CellSize, 0, NULL);
-			LineTo(handleDC, i  * CellSize, windowRectangle.bottom);
-		}
-		EndPaint(hWindow, &paintStruct);
-		DeleteObject(handleDC);
-	}
+	case WM_PAINT:
+		GridPainting(handleWindow);
 		break;
 	case WM_ERASEBKGND:
 		HBRUSH	brush;
 		RECT windowRectangle;
 		brush = CreateSolidBrush(BackGroundColor);
 		SelectObject((HDC)wParam, brush);
-		GetClientRect(hWindow, &windowRectangle);
+		GetClientRect(handleWindow, &windowRectangle);
 		Rectangle((HDC)wParam, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
 		DeleteObject(brush);
 		break;
 	case WM_CLOSE:
-		DestroyWindow(hWindow);
+		DestroyWindow(handleWindow);
 		break;
 	default:
-		return DefWindowProc(hWindow, msg, wParam, lParam);
+		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
 	return 0;
 };
@@ -76,41 +99,33 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 	wndClass.hInstance = HandleInstance;
 	wndClass.hIcon = LoadIcon(HandleInstance, MAKEINTRESOURCE(IDI_APPLICATION));
 	wndClass.hCursor = LoadCursor(NULL, IDC_ARROW);
-	wndClass.hbrBackground = (HBRUSH) (CreateSolidBrush(RGB(0, 0, 255)));
+	wndClass.hbrBackground = (HBRUSH)(CreateSolidBrush(RGB(0, 0, 255)));
 	wndClass.lpszMenuName = NULL;
 	wndClass.lpszClassName = WindowClassName;
 	wndClass.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
 	return RegisterClassEx(&wndClass);
 }
 
-int main() {
-	HINSTANCE HandleInstance = GetModuleHandle(NULL);
+bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	RedPen = CreatePen(PS_SOLID, 1, RGB(220, 20, 60));
-	if (HandleInstance == nullptr) {
-		std::cout << "Can't get Handle Instance";
-		return 0;
-	}
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
-		return 0;
+		return false;
 	};
-	HWND WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("title"), WS_OVERLAPPEDWINDOW | WS_POPUP | WS_VISIBLE | WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, HandleInstance, NULL);
-	RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
-	RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
-	RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
-	RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, 320, 240, NULL, NULL, HandleInstance, NULL);
 	if (!WindowHandle) {
 		std::cout << "Can't create WindowHandle";
-		return 0;
+		return false;
 	}
-	ShowWindow(WindowHandle, SW_SHOW);
-	//UpdateWindow(WindowHandle);
-	MSG Msg;
-	while (GetMessage(&Msg, NULL, 0, 0) > 0)
-	{
-		TranslateMessage(&Msg);
-		DispatchMessage(&Msg);
-	}
+	bool flag = true;
+	flag &= RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
+	flag &= RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
+	flag &= RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
+	flag &= RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	return flag;
+}
+
+void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DeleteObject(RedPen);
 	UnregisterHotKey(WindowHandle, 0);
 	UnregisterHotKey(WindowHandle, 1);
@@ -118,5 +133,26 @@ int main() {
 	UnregisterHotKey(WindowHandle, 3);
 	DestroyWindow(WindowHandle);
 	UnregisterClass(WindowClassName, HandleInstance);
+}
+
+int main() {
+	HINSTANCE HandleInstance = GetModuleHandle(NULL);
+	HWND WindowHandle;
+	MSG Msg;
+	if (HandleInstance == nullptr) {
+		std::cout << "Can't get Handle Instance";
+		return 0;
+	}
+	if (!RegisterAllStuff(HandleInstance, WindowHandle)) {
+		std::cout << "Registration Failed";
+		return 0;
+	}
+	std::cout << "Registration Succeeded!\n";
+	ShowWindow(WindowHandle, SW_SHOW);
+	while (GetMessage(&Msg, NULL, 0, 0) > 0)
+	{
+		TranslateMessage(&Msg);
+		DispatchMessage(&Msg);
+	}
 	return 0;
 }

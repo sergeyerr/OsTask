@@ -1,3 +1,11 @@
 ﻿  Source.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(77): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(100): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(121): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(121): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(122): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(122): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(123): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(123): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(124): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(124): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
   Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe
