@@ -10,6 +10,7 @@ const int CircleRadius = 15;
 std::vector<std::pair<int, int>> *Circles;
 COLORREF BackGroundColor = RGB(0, 0, 255);
 HPEN RedPen;
+HBRUSH YellowBrush;
 
 void RunNotepad()
 {
@@ -21,10 +22,8 @@ void RunNotepad()
 }
 
 void PaintCircle(HDC handleDC, int x, int y) {
-	HBRUSH handleBrush = CreateSolidBrush(RGB(255, 255, 0));
-	SelectObject(handleDC, handleBrush);
+	SelectObject(handleDC, YellowBrush);
 	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);
-	DeleteObject(handleBrush);
 }
 
 void GridAndCirclesPainting(HWND handleWindow) {
@@ -118,6 +117,8 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 
 bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	RedPen = CreatePen(PS_SOLID, 1, RGB(220, 20, 60));
+	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
+	Circles = new std::vector<std::pair<int, int>>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
 		return false;
@@ -142,6 +143,7 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	UnregisterHotKey(WindowHandle, 2);
 	UnregisterHotKey(WindowHandle, 3);
 	DestroyWindow(WindowHandle);
+	DeleteObject(YellowBrush);
 	UnregisterClass(WindowClassName, HandleInstance);
 }
 
@@ -149,7 +151,6 @@ int main() {
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
 	HWND WindowHandle;
 	MSG Msg;
-	Circles = new std::vector<std::pair<int, int>>();
 	if (HandleInstance == nullptr) {
 		std::cout << "Can't get Handle Instance";
 		return 0;

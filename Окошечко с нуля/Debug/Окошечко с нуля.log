@@ -1,11 +1,11 @@
 ﻿  Source.cpp
-c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(110): warning C4302: приведение типов: усечение из "LPWSTR" к "WORD"
-c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(131): warning C4805: &=: небезопасное смешение типа "bool" и типа "BOOL" в операции
-c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(131): warning C4805: &: небезопасное смешение типа "bool" и типа "BOOL" в операции
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(109): warning C4302: приведение типов: усечение из "LPWSTR" к "WORD"
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(132): warning C4805: &=: небезопасное смешение типа "bool" и типа "BOOL" в операции
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(132): warning C4805: &: небезопасное смешение типа "bool" и типа "BOOL" в операции
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(133): warning C4805: &=: небезопасное смешение типа "bool" и типа "BOOL" в операции
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(133): warning C4805: &: небезопасное смешение типа "bool" и типа "BOOL" в операции
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(134): warning C4805: &=: небезопасное смешение типа "bool" и типа "BOOL" в операции
 c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(134): warning C4805: &: небезопасное смешение типа "bool" и типа "BOOL" в операции
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(135): warning C4805: &=: небезопасное смешение типа "bool" и типа "BOOL" в операции
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(135): warning C4805: &: небезопасное смешение типа "bool" и типа "BOOL" в операции
   Окошечко с нуля.vcxproj -> C:\Users\Сергей\Desktop\практики по осям\Os2TaskWinAPI\Debug\Окошечко с нуля.exe
