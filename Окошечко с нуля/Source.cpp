@@ -138,12 +138,12 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 
 void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DeleteObject(RedPen);
+	DeleteObject(YellowBrush);
 	UnregisterHotKey(WindowHandle, 0);
 	UnregisterHotKey(WindowHandle, 1);
 	UnregisterHotKey(WindowHandle, 2);
 	UnregisterHotKey(WindowHandle, 3);
 	DestroyWindow(WindowHandle);
-	DeleteObject(YellowBrush);
 	UnregisterClass(WindowClassName, HandleInstance);
 }
 
@@ -161,10 +161,11 @@ int main() {
 	}
 	std::cout << "Registration Succeeded!\n";
 	ShowWindow(WindowHandle, SW_SHOW);
-	while (GetMessage(&Msg, NULL, 0, 0) > 0)
+	int b;
+	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}
-	return 0;
+	return b;
 }
