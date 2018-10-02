@@ -2,11 +2,15 @@
 #include <Windows.h>
 #include <Windowsx.h>
 #include <tchar.h>
+#include <vector>
+#include <utility>
 const TCHAR* WindowClassName = _T("Mda");
 const int CellSize = 30;
 const int CircleRadius = 15;
+std::vector<std::pair<int, int>> *Circles;
 COLORREF BackGroundColor = RGB(0, 0, 255);
 HPEN RedPen;
+HBRUSH YellowBrush;
 
 void RunNotepad()
 {
@@ -18,12 +22,11 @@ void RunNotepad()
 }
 
 void PaintCircle(HDC handleDC, int x, int y) {
-	HBRUSH handleBrush = CreateSolidBrush(RGB(255, 255, 0));
-	SelectObject(handleDC, handleBrush);
+	SelectObject(handleDC, YellowBrush);
 	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);
 }
 
-void GridPainting(HWND handleWindow) {
+void GridAndCirclesPainting(HWND handleWindow) {
 	PAINTSTRUCT paintStruct;
 	RECT windowRectangle;
 	HDC handleDC = BeginPaint(handleWindow, &paintStruct);
@@ -37,6 +40,9 @@ void GridPainting(HWND handleWindow) {
 		MoveToEx(handleDC, i  * CellSize, 0, NULL);
 		LineTo(handleDC, i  * CellSize, windowRectangle.bottom);
 	}
+	for (auto circle : *Circles) {
+		PaintCircle(handleDC, circle.first, circle.second);
+	}
 	EndPaint(handleWindow, &paintStruct);
 	DeleteObject(handleDC);
 }
@@ -47,9 +53,12 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 	case WM_LBUTTONDOWN:
 	{
 		HDC hDC = GetDC(handleWindow);
-		int clickX = GET_X_LPARAM(lParam);
-		int clickY = GET_Y_LPARAM(lParam);
-		PaintCircle(hDC, clickX, clickY);
+		int x = GET_X_LPARAM(lParam);
+		int y = GET_Y_LPARAM(lParam);
+		x = x - x % CellSize + CellSize / 2;
+		y = y - y % CellSize + CellSize / 2;
+		Circles->push_back({ x, y });
+		InvalidateRect(handleWindow, NULL, TRUE);
 		break;
 	};
 	case WM_DESTROY:
@@ -69,7 +78,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	case WM_PAINT:
-		GridPainting(handleWindow);
+		GridAndCirclesPainting(handleWindow);
 		break;
 	case WM_ERASEBKGND:
 		HBRUSH	brush;
@@ -108,6 +117,8 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 
 bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	RedPen = CreatePen(PS_SOLID, 1, RGB(220, 20, 60));
+	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
+	Circles = new std::vector<std::pair<int, int>>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
 		return false;
@@ -132,6 +143,7 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	UnregisterHotKey(WindowHandle, 2);
 	UnregisterHotKey(WindowHandle, 3);
 	DestroyWindow(WindowHandle);
+	DeleteObject(YellowBrush);
 	UnregisterClass(WindowClassName, HandleInstance);
 }
 
