@@ -10,14 +10,13 @@
 #include <string>
 #include <sstream> 
 #include <functional>
+#include <cstring>
 const TCHAR* WindowClassName = _T("Mda");
 const TCHAR* ConfFileName = _T("config.txt");
-const int CellSize = 30;
 const int CircleRadius = 15;
-
+const int MaxConfFileSize = 1024;
 std::vector<std::pair<int, int>> *Circles;
 HBRUSH YellowBrush;
-
 
 class Options {
 public:
@@ -82,13 +81,13 @@ void GridAndCirclesPainting(HWND handleWindow) {
 	HDC handleDC = BeginPaint(handleWindow, &paintStruct);
 	SelectObject(handleDC, options.LinePen);
 	GetClientRect(handleWindow, &windowRectangle);
-	for (int i = 0; i < windowRectangle.bottom / CellSize + 1; i++) {
-		MoveToEx(handleDC, 0, i  * CellSize, NULL);
-		LineTo(handleDC, windowRectangle.right, i  * CellSize);
+	for (int i = 0; i < windowRectangle.bottom / options.CellSize + 1; i++) {
+		MoveToEx(handleDC, 0, i  * options.CellSize, NULL);
+		LineTo(handleDC, windowRectangle.right, i  * options.CellSize);
 	}
-	for (int i = 0; i < windowRectangle.right / CellSize + 1; i++) {
-		MoveToEx(handleDC, i  * CellSize, 0, NULL);
-		LineTo(handleDC, i  * CellSize, windowRectangle.bottom);
+	for (int i = 0; i < windowRectangle.right / options.CellSize + 1; i++) {
+		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
+		LineTo(handleDC, i  * options.CellSize, windowRectangle.bottom);
 	}
 	for (auto circle : *Circles) {
 		PaintCircle(handleDC, circle.first, circle.second);
@@ -105,8 +104,8 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		HDC hDC = GetDC(handleWindow);
 		int x = GET_X_LPARAM(lParam);
 		int y = GET_Y_LPARAM(lParam);
-		x = x - x % CellSize + CellSize / 2;
-		y = y - y % CellSize + CellSize / 2;
+		x = x - x % options.CellSize + options.CellSize / 2;
+		y = y - y % options.CellSize + options.CellSize / 2;
 		Circles->push_back({ x, y });
 		InvalidateRect(handleWindow, NULL, TRUE);
 		break;
@@ -136,6 +135,8 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		brush = CreateSolidBrush(options.BackGroundColor);
 		SelectObject((HDC)wParam, brush);
 		GetClientRect(handleWindow, &windowRectangle);
+		options.WindowSize.first = windowRectangle.right - windowRectangle.left;
+		options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
 		Rectangle((HDC)wParam, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
 		DeleteObject(brush);
 		break;
@@ -185,6 +186,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	flag &= RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
 	return flag;
 }
+
 void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DeleteObject(YellowBrush);
 	UnregisterHotKey(WindowHandle, 0);
@@ -217,7 +219,7 @@ void ConfigureFromStream() {//облепи защитой
 }
 
 void ConfigureFromFileVar() {
-	FILE* fi = fopen("config.txt", "rt");
+	FILE* fi = fopen((char*)ConfFileName, "rt");
 	if (!fi) {
 		std::cout << "Invalide File Name\n";
 		options = Options();
@@ -267,11 +269,11 @@ void ConfigureFromFileMap() {
 void ConfigureFromFileWinApi() {
 	HANDLE hFile = CreateFile(ConfFileName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	DWORD dwFileSize = GetFileSize(hFile, nullptr);
-	char lpBuffer[1024];
-	for (int i = 0; i < 1024; i++) {
+	char lpBuffer[MaxConfFileSize];
+	for (int i = 0; i < MaxConfFileSize; i++) {
 		lpBuffer[i] = '\0';
 	}
-	bool res = ReadFile(hFile, &lpBuffer, dwFileSize, &dwFileSize, nullptr);
+	ReadFile(hFile, &lpBuffer, dwFileSize, &dwFileSize, nullptr);
 	std::string sData = lpBuffer;
 	std::stringstream ss;
 	ss << sData;
@@ -290,12 +292,46 @@ void SaveWithStream() {
 	std::string test = options.GetOptionsString();
 	out << test;
 	out.close();
+	std::cout << "Saved with stream\n";
+}
+
+void SaveWithFileVar() {
+	FILE* fi = fopen((char*)ConfFileName, "w");
+	if (!fi) {
+		std::cout << "Invalide File Name\n";
+		return;
+	}
+	fprintf(fi, options.GetOptionsString().c_str());
+	fclose(fi);
+	std::cout << "Saved with FileVar\n";
+}
+
+void SaveWithFileMap() {
+	HANDLE hFile = CreateFile(ConfFileName, GENERIC_ALL, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	HANDLE hMapping = CreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, MaxConfFileSize, 0);
+	std::string tmp = options.GetOptionsString();
+	LPTSTR dataPtr = (LPTSTR)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, MaxConfFileSize);
+	CopyMemory((PVOID)dataPtr, tmp.c_str(), sizeof(char) * tmp.size());
+	bool test = FlushViewOfFile(dataPtr, 0);
+	UnmapViewOfFile(dataPtr);
+	CloseHandle(hMapping);
+	CloseHandle(hFile);
+	std::cout << "Saved with FileMap\n";
+}
+
+void SaveWithFileWinApi() {
+	HANDLE hFile = CreateFile(ConfFileName, GENERIC_ALL, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	std::string tmp = options.GetOptionsString();
+	char* lpBuffer = (char *)tmp.c_str();
+	WriteFile(hFile, lpBuffer, sizeof(char) * tmp.size(), nullptr, nullptr);
+	CloseHandle(hFile);
+	std::cout << "Saved with WinApi\n";
 }
 
 int main(int argc, char *argv[]) {
 	std::function<void(void)> SavingFunc = [] {};
 	if (argc > 2) {
-		std::cout << "wrong ags";
+		std::cout << "wrong args";
 		return 0;
 	}
 	if (argc == 1) {
@@ -306,9 +342,19 @@ int main(int argc, char *argv[]) {
 			ConfigureFromStream();
 			SavingFunc = SaveWithStream;
 		}
-		else if (std::string(argv[1]) == "fileVar") ConfigureFromFileVar();
-		else if (std::string(argv[1]) == "mapping") ConfigureFromFileMap();
-		else if (std::string(argv[1]) == "winapi") ConfigureFromFileWinApi();
+		else if (std::string(argv[1]) == "fileVar") {
+			ConfigureFromFileVar();
+			SavingFunc = SaveWithFileVar;
+		}
+		else if (std::string(argv[1]) == "mapping") {
+			ConfigureFromFileMap();
+			SavingFunc = SaveWithFileMap;
+		}
+		else if (std::string(argv[1]) == "winapi")
+		{
+			ConfigureFromFileWinApi();
+			SavingFunc = SaveWithFileWinApi;
+		}
 		else {
 			std::cout << "Invalide argument\n";
 			options = Options();
