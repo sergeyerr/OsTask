@@ -8,6 +8,8 @@
 #include <string>
 #include <fstream>
 #include <string>
+#include <sstream> 
+#include <functional>
 const TCHAR* WindowClassName = _T("Mda");
 const TCHAR* ConfFileName = _T("config.txt");
 const int CellSize = 30;
@@ -15,18 +17,22 @@ const int CircleRadius = 15;
 
 std::vector<std::pair<int, int>> *Circles;
 HBRUSH YellowBrush;
+
+
 class Options {
 public:
 	std::pair<int, int> WindowSize;
 	int CellSize;
 	HPEN LinePen;
 	HBRUSH BackgroundBrush;
+	COLORREF PenColor;
 	COLORREF BackGroundColor;
 	std::vector<std::string> icons;
 	Options() {
 		WindowSize = { 320, 240 };
 		CellSize = 30;
-		LinePen = CreatePen(PS_SOLID, 1, RGB(220, 20, 60));
+		PenColor = RGB(220, 20, 60);
+		LinePen = CreatePen(PS_SOLID, 1, PenColor);
 		BackgroundBrush = CreateSolidBrush(RGB(0, 0, 255));
 		icons = std::vector<std::string>();
 		BackGroundColor = RGB(0, 0, 255);
@@ -34,13 +40,24 @@ public:
 	Options(std::vector<std::string> input) {
 		WindowSize = { std::stoi(input[0]),std::stoi(input[1]) };
 		CellSize = std::stoi(input[2]);
-		LinePen = CreatePen(PS_SOLID, 1, RGB(std::stoi(input[3]), std::stoi(input[4]), std::stoi(input[5])));
+		PenColor = RGB(std::stoi(input[3]), std::stoi(input[4]), std::stoi(input[5]));
+		LinePen = CreatePen(PS_SOLID, 1, PenColor);
 		BackGroundColor = RGB(std::stoi(input[6]), std::stoi(input[7]), std::stoi(input[8]));
 		BackgroundBrush = CreateSolidBrush(BackGroundColor);
 		icons = std::vector<std::string>();
 		for (int i = 9; i < input.size(); i++) {
 			icons.push_back(input[i]);
 		}
+	}
+	std::string GetOptionsString() {
+		std::stringstream ss;
+		ss << WindowSize.first << ' ' << WindowSize.second << ' ' << CellSize
+			<< ' ' << int(GetRValue(PenColor))<< ' ' << int(GetGValue(PenColor))<< ' ' << int(GetBValue(PenColor))
+			<< ' ' << int(GetRValue(BackGroundColor)) << ' ' << int(GetGValue(BackGroundColor)) << ' ' << int(GetBValue(BackGroundColor));
+		for (std::string tmp : icons) {
+			ss  << ' '<< tmp;
+		}
+		return ss.str();
 	}
 };
 Options options;
@@ -201,6 +218,11 @@ void ConfigureFromStream() {//облепи защитой
 
 void ConfigureFromFileVar() {
 	FILE* fi = fopen("config.txt", "rt");
+	if (!fi) {
+		std::cout << "Invalide File Name\n";
+		options = Options();
+		return;
+	}
 	std::vector<std::string> optionsList;
 	while (!feof(fi)) {
 		char tmp[255];
@@ -218,8 +240,60 @@ void ConfigureFromFileVar() {
 	fclose(fi);
 }
 
+void ConfigureFromFileMap() {
+	HANDLE hFile = CreateFile(ConfFileName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	DWORD dwFileSize = GetFileSize(hFile, nullptr);
+	HANDLE hMapping = CreateFileMapping(hFile, nullptr, PAGE_READONLY,0, 0, nullptr);
+	unsigned char* dataPtr = (unsigned char*)MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, dwFileSize);
+	if (hFile == INVALID_HANDLE_VALUE || dataPtr == nullptr) {
+		std::cout << "Smth Go Wrong\n";
+		options = Options();
+		return;
+	}
+	std::stringstream ss;
+	ss << dataPtr;
+	std::vector<std::string> optionsList;
+	std::string tmp;
+	while (ss >> tmp) {
+		optionsList.push_back(tmp);
+	}
+	std::cout << "All is ok with mapping \n";
+	options = Options(optionsList);
+	UnmapViewOfFile(dataPtr);
+	CloseHandle(hMapping);
+	CloseHandle(hFile);
+}
+
+void ConfigureFromFileWinApi() {
+	HANDLE hFile = CreateFile(ConfFileName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+	DWORD dwFileSize = GetFileSize(hFile, nullptr);
+	char lpBuffer[1024];
+	for (int i = 0; i < 1024; i++) {
+		lpBuffer[i] = '\0';
+	}
+	bool res = ReadFile(hFile, &lpBuffer, dwFileSize, &dwFileSize, nullptr);
+	std::string sData = lpBuffer;
+	std::stringstream ss;
+	ss << sData;
+	std::vector<std::string> optionsList;
+	std::string tmp;
+	while (ss >> tmp) {
+		optionsList.push_back(tmp);
+	}
+	std::cout << "All is ok with WinApi File\n";
+	options = Options(optionsList);
+	CloseHandle(hFile);
+}
+
+void SaveWithStream() {
+	std::ofstream out("config.txt");
+	std::string test = options.GetOptionsString();
+	out << test;
+	out.close();
+}
 
 int main(int argc, char *argv[]) {
+	std::function<void(void)> SavingFunc = [] {};
 	if (argc > 2) {
 		std::cout << "wrong ags";
 		return 0;
@@ -228,8 +302,17 @@ int main(int argc, char *argv[]) {
 		options = Options();
 	}
 	else {
-		if (std::string(argv[1]) == "stream") ConfigureFromStream();
+		if (std::string(argv[1]) == "stream") {
+			ConfigureFromStream();
+			SavingFunc = SaveWithStream;
+		}
 		else if (std::string(argv[1]) == "fileVar") ConfigureFromFileVar();
+		else if (std::string(argv[1]) == "mapping") ConfigureFromFileMap();
+		else if (std::string(argv[1]) == "winapi") ConfigureFromFileWinApi();
+		else {
+			std::cout << "Invalide argument\n";
+			options = Options();
+		}
 	}
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
 	HWND WindowHandle;
@@ -250,6 +333,7 @@ int main(int argc, char *argv[]) {
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}
+	SavingFunc();
 	ClearAllStuff(HandleInstance, WindowHandle);
 	return b;
 }
