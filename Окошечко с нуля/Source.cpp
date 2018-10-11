@@ -199,6 +199,17 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	UnregisterClass(WindowClassName, HandleInstance);
 }
 
+void OptionListHandler(std::vector<std::string> &optionsList) {
+	if (optionsList.size() < 9) {
+		std::cout << "Invalid Config\n";
+		options = Options();
+	}
+	else {
+	
+		options = Options(optionsList);
+	}
+}
+
 void ConfigureFromStream() {
 	std::ifstream in(ConfFileName);
 	std::vector<std::string> optionsList;
@@ -207,14 +218,7 @@ void ConfigureFromStream() {
 		in >> tmp;
 		optionsList.push_back(tmp);
 	}
-	if (optionsList.size() < 9) {
-		std::cout << "Invalid Config\n";
-		options = Options();
-	}
-	else {
-		std::cout << "Configured from Stream!\n";
-		options = Options(optionsList);
-	}
+	std::cout << "Configured from Stream!\n";
 	in.close();
 }
 
@@ -231,14 +235,8 @@ void ConfigureFromFileVar() {
 		fscanf(fi, "%s", &tmp);
 		optionsList.push_back(tmp);
 	}
-	if (optionsList.size() < 9) {
-		std::cout << "Invalid Config\n";
-		options = Options();
-	}
-	else {
-		std::cout << "Configured from File Variable!\n";
-		options = Options(optionsList);
-	}
+	std::cout << "Configured from File Variable!\n";
+	OptionListHandler(optionsList);
 	fclose(fi);
 }
 
@@ -259,8 +257,8 @@ void ConfigureFromFileMap() {
 	while (ss >> tmp) {
 		optionsList.push_back(tmp);
 	}
-	std::cout << "All is ok with mapping \n";
-	options = Options(optionsList);
+	std::cout << "Configured from File Mapping!\n";
+	OptionListHandler(optionsList);
 	UnmapViewOfFile(dataPtr);
 	CloseHandle(hMapping);
 	CloseHandle(hFile);
@@ -289,7 +287,7 @@ void ConfigureFromFileWinApi() {
 		optionsList.push_back(tmp);
 	}
 	std::cout << "All is ok with WinApi File\n";
-	options = Options(optionsList);
+	OptionListHandler(optionsList);
 	CloseHandle(hFile);
 }
 
