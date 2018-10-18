@@ -12,14 +12,15 @@
 #include <functional>
 #include <cstring>
 #include "TestLib.h"
+#include <ctime>
 const TCHAR* WindowClassName = _T("Mda");
 const TCHAR* ConfFileName = _T("config.txt");
 const int CircleRadius = 15;
 const int BufferSize = 1024;
-std::vector<std::pair<int, int>> *Circles;
+std::vector<std::pair<std::pair<int, int>, HBITMAP>> *Circles;
 HBRUSH YellowBrush;
-HBITMAP Test;
-int testw, testh;
+HBITMAP Test1;
+HBITMAP Test2;
 class Options {
 public:
 	std::pair<int, int> WindowSize;
@@ -72,10 +73,13 @@ void RunNotepad()
 		NULL, NULL, NULL, FALSE, 0, NULL, NULL, &sInfo, &pInfo);
 }
 
-void PaintCircle(HDC handleDC, int x, int y) {
+void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic) {
 	HDC hdcMem = CreateCompatibleDC(handleDC);
-	HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, Test);
-	BitBlt(handleDC, 0, 0, testw, testh, hdcMem, 0, 0, SRCCOPY);
+	HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, Pic);
+	BitBlt(handleDC, x - options.CellSize / 2, y - options.CellSize/2, options.CellSize * 2, options.CellSize * 2, hdcMem, 0, 0, SRCCOPY);
+	SelectObject(hdcMem, oldBmp);
+	DeleteDC(hdcMem);
+	handleDC = NULL;
 	/*SelectObject(handleDC, YellowBrush);
 	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);*/
 }
@@ -95,7 +99,7 @@ void GridAndCirclesPainting(HWND handleWindow) {
 		LineTo(handleDC, i  * options.CellSize, windowRectangle.bottom);
 	}
 	for (auto circle : *Circles) {
-		PaintCircle(handleDC, circle.first, circle.second);
+		PaintCircle(handleDC, circle.first.first, circle.first.second, circle.second);
 	}
 	EndPaint(handleWindow, &paintStruct);
 	DeleteObject(handleDC);
@@ -111,7 +115,9 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		int y = GET_Y_LPARAM(lParam);
 		x = x - x % options.CellSize + options.CellSize / 2;
 		y = y - y % options.CellSize + options.CellSize / 2;
-		Circles->push_back({ x, y });
+		HBITMAP Pic;
+		if (std::rand() % 2) Pic = Test1; else Pic = Test2;
+		Circles->push_back({ { x, y }, Pic });
 		InvalidateRect(handleWindow, NULL, TRUE);
 		break;
 	};
@@ -173,8 +179,9 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 
 bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
+	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	Circles = new std::vector<std::pair<int, int>>();
+	Circles = new std::vector<std::pair<std::pair<int, int>, HBITMAP>>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
 		return false;
@@ -339,30 +346,28 @@ void SaveWithFileWinApi() {
 
 void SaveBitMaps() {
 	HINSTANCE h;
-	unsigned char*(*DllFunc) (const char*	filename, int*	width, int*	height);
+	unsigned char*(*GetArr) (const char*	filename, int*	width, int*	height);
 	h = LoadLibrary(_T("testlib.dll"));
 	if (!h)
 	{
 		std::cout << "No TestLib.dll\n";
 		return;
 	}
-	DllFunc = (unsigned char*(*) (const char* filename, int*	width, int*	height))
+	GetArr = (unsigned char*(*) (const char* filename, int*	width, int*	height))
 		GetProcAddress(h, "load_image");
-	if (!DllFunc)
+	if (!GetArr)
 	{
 		std::cout << "No loadImage in DLL \n";
 		return;
 	}
-	unsigned char* arr = DllFunc("C:\\Users\\Sergey\\Desktop\\prog trash\\ConsoleApplication1\\1.png", &testw, &testh);
-	for (int i = 0; i < testh - 1; i++) {
-		for(int j = 0; j < testw; j++) {
-			std::cout << arr[i*testh + j] << "\n";
-		}
-	}
-	Test = CreateBitmap(testw, testh, 4, 32, arr);
-	int b = 0;
+	int testw, testh;
+	unsigned char* arr = GetArr("1.png", &testw, &testh);
+	Test1 = CreateBitmap(testw, testh, 1, 32, arr);
+	arr = GetArr("2.jpg", &testw, &testh);
+	Test2 = CreateBitmap(testw, testh, 1, 32, arr);
 }
-std::function<void(void)> HandleInput(int argc, char *argv[]) {
+
+int main(int argc, char *argv[]) {
 	std::function<void(void)> SavingFunc = [] {};
 	if (argc > 2) {
 		std::cout << "wrong args";
@@ -394,9 +399,6 @@ std::function<void(void)> HandleInput(int argc, char *argv[]) {
 			options = Options();
 		}
 	}
-}
-int main(int argc, char *argv[]) {
-	std::function<void(void)> SavingFunc = HandleInput(argc, argv);
 	SaveBitMaps();
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
 	HWND WindowHandle;
