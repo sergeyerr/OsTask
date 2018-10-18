@@ -11,13 +11,15 @@
 #include <sstream> 
 #include <functional>
 #include <cstring>
+#include "TestLib.h"
 const TCHAR* WindowClassName = _T("Mda");
 const TCHAR* ConfFileName = _T("config.txt");
 const int CircleRadius = 15;
 const int MaxConfFileSize = 1024;
 std::vector<std::pair<int, int>> *Circles;
 HBRUSH YellowBrush;
-
+HBITMAP Test;
+int testw, testh;
 class Options {
 public:
 	std::pair<int, int> WindowSize;
@@ -71,8 +73,11 @@ void RunNotepad()
 }
 
 void PaintCircle(HDC handleDC, int x, int y) {
-	SelectObject(handleDC, YellowBrush);
-	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);
+	HDC hdcMem = CreateCompatibleDC(handleDC);
+	HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, Test);
+	BitBlt(handleDC, 0, 0, testw, testh, hdcMem, 0, 0, SRCCOPY);
+	/*SelectObject(handleDC, YellowBrush);
+	Ellipse(handleDC, x - CircleRadius, y + CircleRadius, x + CircleRadius, y - CircleRadius);*/
 }
 
 void GridAndCirclesPainting(HWND handleWindow) {
@@ -328,7 +333,32 @@ void SaveWithFileWinApi() {
 	std::cout << "Saved with WinApi\n";
 }
 
-int main(int argc, char *argv[]) {
+void SaveBitMaps() {
+	HINSTANCE h;
+	unsigned char*(*DllFunc) (const char*	filename, int*	width, int*	height);
+	h = LoadLibrary(_T("testlib.dll"));
+	if (!h)
+	{
+		std::cout << "No TestLib.dll\n";
+		return;
+	}
+	DllFunc = (unsigned char*(*) (const char* filename, int*	width, int*	height))
+		GetProcAddress(h, "load_image");
+	if (!DllFunc)
+	{
+		std::cout << "No loadImage in DLL \n";
+		return;
+	}
+	unsigned char* arr = DllFunc("C:\\Users\\Sergey\\Desktop\\prog trash\\ConsoleApplication1\\1.png", &testw, &testh);
+	for (int i = 0; i < testh - 1; i++) {
+		for(int j = 0; j < testw; j++) {
+			std::cout << arr[i*testh + j] << "\n";
+		}
+	}
+	Test = CreateBitmap(testw, testh, 4, 32, arr);
+	int b = 0;
+}
+std::function<void(void)> HandleInput(int argc, char *argv[]) {
 	std::function<void(void)> SavingFunc = [] {};
 	if (argc > 2) {
 		std::cout << "wrong args";
@@ -360,6 +390,10 @@ int main(int argc, char *argv[]) {
 			options = Options();
 		}
 	}
+}
+int main(int argc, char *argv[]) {
+	std::function<void(void)> SavingFunc = HandleInput(argc, argv);
+	SaveBitMaps();
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
 	HWND WindowHandle;
 	MSG Msg;
