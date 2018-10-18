@@ -15,7 +15,7 @@
 const TCHAR* WindowClassName = _T("Mda");
 const TCHAR* ConfFileName = _T("config.txt");
 const int CircleRadius = 15;
-const int MaxConfFileSize = 1024;
+const int BufferSize = 1024;
 std::vector<std::pair<int, int>> *Circles;
 HBRUSH YellowBrush;
 HBITMAP Test;
@@ -204,7 +204,18 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	UnregisterClass(WindowClassName, HandleInstance);
 }
 
-void ConfigureFromStream() {//облепи защитой 
+void OptionListHandler(std::vector<std::string> &optionsList) {
+	if (optionsList.size() < 9) {
+		std::cout << "Invalid Config\n";
+		options = Options();
+	}
+	else {
+	
+		options = Options(optionsList);
+	}
+}
+
+void ConfigureFromStream() {
 	std::ifstream in(ConfFileName);
 	std::vector<std::string> optionsList;
 	std::string tmp;
@@ -212,19 +223,12 @@ void ConfigureFromStream() {//облепи защитой
 		in >> tmp;
 		optionsList.push_back(tmp);
 	}
-	if (optionsList.size() < 9) {
-		std::cout << "Invalid Config\n";
-		options = Options();
-	}
-	else {
-		std::cout << "Configured from Stream!\n";
-		options = Options(optionsList);
-	}
+	std::cout << "Configured from Stream!\n";
 	in.close();
 }
 
 void ConfigureFromFileVar() {
-	FILE* fi = fopen((char*)ConfFileName, "rt");
+	FILE* fi = _tfopen(ConfFileName, _T("r"));
 	if (!fi) {
 		std::cout << "Invalide File Name\n";
 		options = Options();
@@ -232,18 +236,12 @@ void ConfigureFromFileVar() {
 	}
 	std::vector<std::string> optionsList;
 	while (!feof(fi)) {
-		char tmp[255];
+		char tmp[BufferSize];
 		fscanf(fi, "%s", &tmp);
 		optionsList.push_back(tmp);
 	}
-	if (optionsList.size() < 9) {
-		std::cout << "Invalid Config\n";
-		options = Options();
-	}
-	else {
-		std::cout << "Configured from File Variable!\n";
-		options = Options(optionsList);
-	}
+	std::cout << "Configured from File Variable!\n";
+	OptionListHandler(optionsList);
 	fclose(fi);
 }
 
@@ -264,8 +262,8 @@ void ConfigureFromFileMap() {
 	while (ss >> tmp) {
 		optionsList.push_back(tmp);
 	}
-	std::cout << "All is ok with mapping \n";
-	options = Options(optionsList);
+	std::cout << "Configured from File Mapping!\n";
+	OptionListHandler(optionsList);
 	UnmapViewOfFile(dataPtr);
 	CloseHandle(hMapping);
 	CloseHandle(hFile);
@@ -274,12 +272,18 @@ void ConfigureFromFileMap() {
 void ConfigureFromFileWinApi() {
 	HANDLE hFile = CreateFile(ConfFileName, GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
 	DWORD dwFileSize = GetFileSize(hFile, nullptr);
-	char lpBuffer[MaxConfFileSize];
-	for (int i = 0; i < MaxConfFileSize; i++) {
+	std::string sData = "";
+	char lpBuffer[BufferSize];
+	for (int i = 0; i < BufferSize; i++) {
 		lpBuffer[i] = '\0';
 	}
-	ReadFile(hFile, &lpBuffer, dwFileSize, &dwFileSize, nullptr);
-	std::string sData = lpBuffer;
+	DWORD rSize;
+	while (ReadFile(hFile, &lpBuffer, dwFileSize, &rSize, nullptr) && std::string(lpBuffer) != "") {
+		sData += lpBuffer;
+		for (int i = 0; i < BufferSize; i++) {
+			lpBuffer[i] = '\0';
+		}
+	}
 	std::stringstream ss;
 	ss << sData;
 	std::vector<std::string> optionsList;
@@ -288,7 +292,7 @@ void ConfigureFromFileWinApi() {
 		optionsList.push_back(tmp);
 	}
 	std::cout << "All is ok with WinApi File\n";
-	options = Options(optionsList);
+	OptionListHandler(optionsList);
 	CloseHandle(hFile);
 }
 
@@ -301,7 +305,7 @@ void SaveWithStream() {
 }
 
 void SaveWithFileVar() {
-	FILE* fi = fopen((char*)ConfFileName, "w");
+	FILE* fi = _tfopen(ConfFileName, _T("w"));
 	if (!fi) {
 		std::cout << "Invalide File Name\n";
 		return;
@@ -313,9 +317,9 @@ void SaveWithFileVar() {
 
 void SaveWithFileMap() {
 	HANDLE hFile = CreateFile(ConfFileName, GENERIC_ALL, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
-	HANDLE hMapping = CreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, MaxConfFileSize, 0);
+	HANDLE hMapping = CreateFileMapping(hFile, nullptr, PAGE_READWRITE, 0, BufferSize, 0);
 	std::string tmp = options.GetOptionsString();
-	LPTSTR dataPtr = (LPTSTR)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, MaxConfFileSize);
+	LPTSTR dataPtr = (LPTSTR)MapViewOfFile(hMapping, FILE_MAP_WRITE, 0, 0, BufferSize);
 	CopyMemory((PVOID)dataPtr, tmp.c_str(), sizeof(char) * tmp.size());
 	bool test = FlushViewOfFile(dataPtr, 0);
 	UnmapViewOfFile(dataPtr);
@@ -372,7 +376,7 @@ std::function<void(void)> HandleInput(int argc, char *argv[]) {
 			ConfigureFromStream();
 			SavingFunc = SaveWithStream;
 		}
-		else if (std::string(argv[1]) == "fileVar") {
+		else if (std::string(argv[1]) == "filevar") {
 			ConfigureFromFileVar();
 			SavingFunc = SaveWithFileVar;
 		}
