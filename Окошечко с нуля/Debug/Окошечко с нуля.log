@@ -1,13 +1,12 @@
 ﻿  Source.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(50): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(171): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(195): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(195): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(196): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(196): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(197): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(197): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(198): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\source.cpp(198): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
-  Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe
-  Скопировано файлов: 0.
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(50): warning C4018: '<': signed/unsigned mismatch
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(171): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(195): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(195): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(196): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(196): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(197): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(197): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(198): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\сергей\desktop\практики по осям\os2taskwinapi\окошечко с нуля\source.cpp(198): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+  Окошечко с нуля.vcxproj -> C:\Users\Сергей\Desktop\практики по осям\Os2TaskWinAPI\Debug\Окошечко с нуля.exe

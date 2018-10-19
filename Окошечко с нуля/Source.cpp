@@ -357,7 +357,7 @@ void SaveBitMaps() {
 		GetProcAddress(h, "load_image");
 	if (!GetArr)
 	{
-		std::cout << "No loadImage in DLL \n";
+		std::cout << "No load Image in DLL \n";
 		return;
 	}
 	int testw, testh;
@@ -365,6 +365,7 @@ void SaveBitMaps() {
 	Test1 = CreateBitmap(testw, testh, 1, 32, arr);
 	arr = GetArr("2.jpg", &testw, &testh);
 	Test2 = CreateBitmap(testw, testh, 1, 32, arr);
+	FreeLibrary(h);
 }
 
 int main(int argc, char *argv[]) {
