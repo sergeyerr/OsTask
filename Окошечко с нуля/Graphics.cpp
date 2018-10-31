@@ -27,7 +27,7 @@ void GridAndCirclesPainting(HWND handleWindow) {
 		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
 		LineTo(handleDC, i  * options.CellSize, windowRectangle.bottom);
 	}
-	for (auto circle : *circles) {
+	for (auto circle : *PlacedPictures) {
 		PaintCircle(handleDC, circle.first.first, circle.first.second, circle.second);
 	}
 	EndPaint(handleWindow, &paintStruct);

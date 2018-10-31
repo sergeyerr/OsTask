@@ -4,11 +4,10 @@
 #include "Options.h"
 
 #ifndef _WE_WAS_HERE
-std::vector<std::pair<std::pair<int, int>, HBITMAP>> *circles;
+std::vector<std::pair<std::pair<int, int>, HBITMAP>> *PlacedPictures;
+std::vector<HBITMAP> *PicturesBitmaps;
 HBRUSH YellowBrush;
-HBITMAP Test1;
-HBITMAP Test2;
 Options options;
 #define _WE_WAS_HERE
-#endif // !1
+#endif
 

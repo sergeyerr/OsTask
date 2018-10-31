@@ -6,7 +6,7 @@
 #include <fstream>
 #include "Options.h"
 #include "OsLabGlobals.h"
-#include "OsLab.h"
+#include "OsLabFunctions.h"
 const TCHAR* ConfFileName = _T("config.txt");
 void ConfigureFromStream() {
 	std::ifstream in(ConfFileName);

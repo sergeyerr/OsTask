@@ -1,5 +1,5 @@
 #pragma once
-#include "OsLab.h"
+#include "OsLabFunctions.h"
 #include <windowsx.h>
 #include <tchar.h>
 #include "OsLabGlobals.h"
@@ -27,8 +27,17 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		x = x - x % options.CellSize + options.CellSize / 2;
 		y = y - y % options.CellSize + options.CellSize / 2;
 		HBITMAP Pic;
-		if (std::rand() % 2) Pic = Test1; else Pic = Test2;
-		circles->push_back({ { x, y }, Pic });
+		Pic = (*PicturesBitmaps)[std::rand() % PicturesBitmaps->size()];
+		bool found = false;
+		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end();i++) {
+			auto elem = *i;
+			if (elem.first.first == x && elem.first.second == y) {
+			i->second = Pic;
+				found = true;
+				break;
+			}
+		}
+		if (!found) PlacedPictures->push_back({ { x, y }, Pic });
 		InvalidateRect(handleWindow, NULL, TRUE);
 		break;
 	};
@@ -92,7 +101,8 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	circles = new std::vector<std::pair<std::pair<int, int>, HBITMAP>>();
+	PlacedPictures = new std::vector<std::pair<std::pair<int, int>, HBITMAP>>();
+	PicturesBitmaps = new std::vector<HBITMAP>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
 		return false;
@@ -165,4 +175,5 @@ std::function<void(void)> CMD_Processor(int argc, char *argv[]) {
 			options = Options();
 		}
 	}
+	return SavingFunc;
 }
