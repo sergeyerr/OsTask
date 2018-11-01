@@ -4,7 +4,7 @@
 #include "Options.h"
 #include <string>
 #ifndef _WE_WAS_HERE
-std::vector<std::pair<std::pair<int, int>, int>> *PlacedPictures;
+std::vector<std::vector<unsigned char>> *PlacedPictures;
 std::vector<HBITMAP> *PicturesBitmaps;
 HBRUSH YellowBrush;
 Options options;

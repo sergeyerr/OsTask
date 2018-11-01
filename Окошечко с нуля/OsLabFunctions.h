@@ -30,7 +30,7 @@ void SaveBitMaps();
 
 //MultiProcess
 void ManageSharedMemory();
-void SaveToSharedMemory();
+void SaveToSharedMemory(int i, int j);
 void SyncWithSharedMemory();
 
 

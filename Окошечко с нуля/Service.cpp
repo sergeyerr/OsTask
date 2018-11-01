@@ -31,7 +31,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		int picId = std::rand() % PicturesBitmaps->size();
 		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
 		InvalidateRect(handleWindow, NULL, TRUE);
-		SaveToSharedMemory();
+		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
 		break;
 	};
 	case WM_DESTROY:
@@ -95,7 +95,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	PlacedPictures = new std::vector<std::vector<int>>(options.n, std::vector<int>(options.m, -1));
+	PlacedPictures = new std::vector<std::vector<unsigned char>>(options.n, std::vector<unsigned char>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
