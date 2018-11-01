@@ -131,7 +131,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="SaveBitMaps.cpp" />
+    <ClCompile Include="FileWorking.cpp" />
+    <ClCompile Include="Graphics.cpp" />
+    <ClCompile Include="OsLabGlobalsDefinition.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Service.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Options.h" />
+    <ClInclude Include="OsLabFunctions.h" />
+    <ClInclude Include="OsLabGlobals.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
