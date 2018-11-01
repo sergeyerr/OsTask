@@ -28,18 +28,20 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		if (x > options.m * options.CellSize || y > options.n * options.CellSize) break;
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
-		Pic = (*PicturesBitmaps)[std::rand() % PicturesBitmaps->size()];
+		int picId = std::rand() % PicturesBitmaps->size();
+		Pic = (*PicturesBitmaps)[picId];
 		bool found = false;
-		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end();i++) {
+		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end(); i++) {
 			auto elem = *i;
 			if (elem.first.first == x && elem.first.second == y) {
-			i->second = Pic;
+				i->second = picId;
 				found = true;
 				break;
 			}
 		}
-		if (!found) PlacedPictures->push_back({ { x, y }, Pic });
+		if (!found) PlacedPictures->push_back({ { x, y }, picId });
 		InvalidateRect(handleWindow, NULL, TRUE);
+		SaveToSharedMemory();
 		break;
 	};
 	case WM_DESTROY:
@@ -76,6 +78,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		DestroyWindow(handleWindow);
 		break;
 	default:
+		SyncWithSharedMemory();
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
 	return 0;
@@ -102,7 +105,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	PlacedPictures = new std::vector<std::pair<std::pair<int, int>, HBITMAP>>();
+	PlacedPictures = new std::vector<std::pair<std::pair<int, int>, int>>();
 	PicturesBitmaps = new std::vector<HBITMAP>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
@@ -114,10 +117,11 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 		return false;
 	}
 	bool flag = true;
-	flag &= RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
-	flag &= RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
-	flag &= RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
-	flag &= RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
+	RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
+	RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
+	RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	ManageSharedMemory();
 	return flag;
 }
 

@@ -131,6 +131,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MultiProcessStoryTelling.cpp" />
     <ClCompile Include="SaveBitMaps.cpp" />
     <ClCompile Include="FileWorking.cpp" />
     <ClCompile Include="Graphics.cpp" />

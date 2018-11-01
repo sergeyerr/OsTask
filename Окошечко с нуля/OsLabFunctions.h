@@ -28,6 +28,9 @@ void SaveWithFileWinApi();
 //Bitmaps
 void SaveBitMaps();
 
-
+//MultiProcess
+void ManageSharedMemory();
+void SaveToSharedMemory();
+void SyncWithSharedMemory();
 
 
