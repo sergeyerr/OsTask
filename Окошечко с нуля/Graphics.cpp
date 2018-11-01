@@ -19,13 +19,13 @@ void GridAndCirclesPainting(HWND handleWindow) {
 	HDC handleDC = BeginPaint(handleWindow, &paintStruct);
 	SelectObject(handleDC, options.LinePen);
 	GetClientRect(handleWindow, &windowRectangle);
-	for (int i = 0; i < windowRectangle.bottom / options.CellSize + 1; i++) {
+	for (int i = 0; i <  options.n + 1/*windowRectangle.bottom / options.CellSize + 1*/; i++) {
 		MoveToEx(handleDC, 0, i  * options.CellSize, NULL);
-		LineTo(handleDC, windowRectangle.right, i  * options.CellSize);
+		LineTo(handleDC, options.CellSize * options.m /*windowRectangle.right*/, i  * options.CellSize);
 	}
-	for (int i = 0; i < windowRectangle.right / options.CellSize + 1; i++) {
+	for (int i = 0; i < options.m + 1/*windowRectangle.right / options.CellSize + 1*/; i++) {
 		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
-		LineTo(handleDC, i  * options.CellSize, windowRectangle.bottom);
+		LineTo(handleDC, i  * options.CellSize, options.CellSize * options.n);
 	}
 	for (auto circle : *PlacedPictures) {
 		PaintCircle(handleDC, circle.first.first, circle.first.second, circle.second);

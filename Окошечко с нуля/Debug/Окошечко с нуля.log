@@ -1,4 +1,13 @@
-﻿  Source.cpp
+﻿  Service.cpp
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(32): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(92): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(117): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(117): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(118): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(118): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(119): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(119): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(120): warning C4805: '&=': unsafe mix of type 'bool' and type 'BOOL' in operation
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(120): warning C4805: '&': unsafe mix of type 'bool' and type 'BOOL' in operation
   Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe

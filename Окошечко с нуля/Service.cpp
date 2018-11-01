@@ -21,12 +21,13 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 	{
 	case WM_LBUTTONDOWN:
 	{
-		HDC hDC = GetDC(handleWindow);
 		int x = GET_X_LPARAM(lParam);
 		int y = GET_Y_LPARAM(lParam);
 		x = x - x % options.CellSize + options.CellSize / 2;
 		y = y - y % options.CellSize + options.CellSize / 2;
+		if (x > options.m * options.CellSize || y > options.n * options.CellSize) break;
 		HBITMAP Pic;
+		HDC hDC = GetDC(handleWindow);
 		Pic = (*PicturesBitmaps)[std::rand() % PicturesBitmaps->size()];
 		bool found = false;
 		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end();i++) {
@@ -133,12 +134,11 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 }
 
 void OptionListHandler(std::vector<std::string> &optionsList) {
-	if (optionsList.size() < 9) {
+	if (optionsList.size() < 11) {
 		std::cout << "Invalid Config\n";
 		options = Options();
 	}
 	else {
-
 		options = Options(optionsList);
 	}
 }
