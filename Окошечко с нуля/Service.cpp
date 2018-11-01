@@ -29,17 +29,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
 		int picId = std::rand() % PicturesBitmaps->size();
-		Pic = (*PicturesBitmaps)[picId];
-		bool found = false;
-		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end(); i++) {
-			auto elem = *i;
-			if (elem.first.first == x && elem.first.second == y) {
-				i->second = picId;
-				found = true;
-				break;
-			}
-		}
-		if (!found) PlacedPictures->push_back({ { x, y }, picId });
+		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
 		InvalidateRect(handleWindow, NULL, TRUE);
 		SaveToSharedMemory();
 		break;
@@ -105,7 +95,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	PlacedPictures = new std::vector<std::pair<std::pair<int, int>, int>>();
+	PlacedPictures = new std::vector<std::vector<int>>(options.n, std::vector<int>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";

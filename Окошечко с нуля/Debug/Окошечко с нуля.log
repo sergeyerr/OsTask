@@ -1,6 +1,104 @@
-﻿  MultiProcessStoryTelling.cpp
+﻿  FileWorking.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Graphics.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\graphics.cpp(16): fatal error C1075: '{': no matching token found
+  MultiProcessStoryTelling.cpp
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(21): warning C4267: '=': conversion from 'size_t' to 'unsigned char', possible loss of data
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(22): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(23): error C2039: 'first': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(24): error C2039: 'first': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(25): error C2039: 'second': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(33): warning C4018: '<=': signed/unsigned mismatch
-  Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(34): error C2664: 'void std::vector<std::vector<int,std::allocator<_Ty>>,std::allocator<std::vector<_Ty,std::allocator<_Ty>>>>::push_back(std::vector<_Ty,std::allocator<_Ty>> &&)': cannot convert argument 1 from 'initializer list' to 'const _Ty &'
+          with
+          [
+              _Ty=int
+          ]
+          and
+          [
+              _Ty=std::vector<int,std::allocator<int>>
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(34): note: Reason: cannot convert from 'initializer list' to 'const _Ty'
+          with
+          [
+              _Ty=std::vector<int,std::allocator<int>>
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(34): note: No constructor could take the source type, or constructor overload resolution was ambiguous
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(35): error C2039: 'first': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(36): error C2039: 'first': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(37): error C2039: 'second': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\multiprocessstorytelling.cpp(40): error C2039: 'second': is not a member of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabglobals.h(7): note: see declaration of 'std::vector<int,std::allocator<_Ty>>'
+          with
+          [
+              _Ty=int
+          ]
+  SaveBitMaps.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+  Service.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(29): warning C4101: 'Pic': unreferenced local variable
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(85): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+  Generating Code...

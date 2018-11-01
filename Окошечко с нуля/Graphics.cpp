@@ -27,8 +27,9 @@ void GridAndCirclesPainting(HWND handleWindow) {
 		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
 		LineTo(handleDC, i  * options.CellSize, options.CellSize * options.n);
 	}
-	for (auto PicData : *PlacedPictures) {
-		PaintCircle(handleDC, PicData.first.first, PicData.first.second, (*PicturesBitmaps)[PicData.second]);
+	for (int i = 0; i < options.n; i++) {
+		for (int j = 0; j < options.m; j++) {
+		PaintCircle(handleDC, j * options.CellSize, i * options.CellSize , (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
 	}
 	EndPaint(handleWindow, &paintStruct);
 	DeleteObject(handleDC);
