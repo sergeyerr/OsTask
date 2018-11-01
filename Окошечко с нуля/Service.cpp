@@ -19,6 +19,9 @@ void RunNotepad()
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam) {
 	switch (msg)
 	{
+	case KEK:
+		SyncWithSharedMemory();
+		break;
 	case WM_LBUTTONDOWN:
 	{
 		int x = GET_X_LPARAM(lParam);
@@ -32,6 +35,8 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
 		InvalidateRect(handleWindow, NULL, TRUE);
 		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
+		//BroadcastSystemMessage(BSF_POSTMESSAGE,(LPDWORD) BSM_APPLICATIONS, KEK, 0, 0);
+		//PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
 	case WM_DESTROY:
@@ -68,7 +73,6 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		DestroyWindow(handleWindow);
 		break;
 	default:
-		SyncWithSharedMemory();
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
 	return 0;
