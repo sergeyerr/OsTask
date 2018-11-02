@@ -83,6 +83,7 @@ void ConfigureFromFileWinApi() {
 	std::vector<std::string> optionsList;
 	std::string tmp;
 	while (ss >> tmp) {
+		//std::cout << tmp << " ";
 		optionsList.push_back(tmp);
 	}
 	std::cout << "All is ok with WinApi File\n";

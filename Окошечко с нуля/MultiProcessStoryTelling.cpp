@@ -2,18 +2,20 @@
 #include <vector>
 #include <iostream>
 #include "OsLabGlobals.h"
+#include "OsLabFunctions.h"
 #define SharedMemName  (LPCWSTR)"SharedMemory"
 unsigned char* VievOfMem;
 HANDLE hMapping;
-void SyncWithSharedMemory() {
+void SyncWithSharedMemory(HWND handleWindow) {
 	if (VievOfMem == nullptr) return;
 	for (int i = 0; i < options.n; i++) {
 		for (int j = 0; j < options.m; j++) {
 			(*PlacedPictures)[i][j] = VievOfMem[1 + i * options.m + j];
 		}
 	}
+	InvalidateRect(handleWindow, NULL, TRUE);
 }
-void ManageSharedMemory() {
+void ManageSharedMemory(HWND handleWindow) {
 	hMapping = OpenFileMapping(FILE_MAP_ALL_ACCESS,   FALSE, SharedMemName);
 	if (hMapping == nullptr) {
 		hMapping = CreateFileMapping(INVALID_HANDLE_VALUE, nullptr, PAGE_READWRITE, 0, (options.m*options.n + 1) * sizeof(unsigned char), SharedMemName);
@@ -29,7 +31,7 @@ void ManageSharedMemory() {
 	else {
 		VievOfMem = (unsigned char*)MapViewOfFile(hMapping, FILE_MAP_ALL_ACCESS, 0, 0, (options.m*options.n + 1) * sizeof(unsigned char));
 		VievOfMem[0]++;
-		SyncWithSharedMemory();
+		SyncWithSharedMemory(handleWindow);
 	}
 
 	//UnmapViewOfFile(dataPtr);

@@ -11,4 +11,3 @@ extern std::vector<HBITMAP> *PicturesBitmaps;
 extern HBRUSH YellowBrush;
 extern Options options;
 
-
