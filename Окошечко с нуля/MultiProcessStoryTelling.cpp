@@ -5,6 +5,14 @@
 #define SharedMemName  (LPCWSTR)"SharedMemory"
 unsigned char* VievOfMem;
 HANDLE hMapping;
+void SyncWithSharedMemory() {
+	if (VievOfMem == nullptr) return;
+	for (int i = 0; i < options.n; i++) {
+		for (int j = 0; j < options.m; j++) {
+			(*PlacedPictures)[i][j] = VievOfMem[1 + i * options.m + j];
+		}
+	}
+}
 void ManageSharedMemory() {
 	hMapping = OpenFileMapping(FILE_MAP_ALL_ACCESS,   FALSE, SharedMemName);
 	if (hMapping == nullptr) {
@@ -21,6 +29,7 @@ void ManageSharedMemory() {
 	else {
 		VievOfMem = (unsigned char*)MapViewOfFile(hMapping, FILE_MAP_ALL_ACCESS, 0, 0, (options.m*options.n + 1) * sizeof(unsigned char));
 		VievOfMem[0]++;
+		SyncWithSharedMemory();
 	}
 
 	//UnmapViewOfFile(dataPtr);
@@ -31,13 +40,4 @@ void SaveToSharedMemory(int i, int j) {
 	if (VievOfMem == nullptr) return;
 	unsigned char tmp = (*PlacedPictures)[i][j];
 	VievOfMem[1 + i * options.m + j] = (*PlacedPictures)[i][j];
-}
-
-void SyncWithSharedMemory() {
-	if (VievOfMem == nullptr) return;
-	for (int i = 0; i < options.n; i++) {
-		for (int j = 0; j < options.m; j++) {
-			(*PlacedPictures)[i][j] = VievOfMem[1 + i * options.m + j];
-		}
-	}
 }

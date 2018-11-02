@@ -8,6 +8,7 @@ std::vector<std::vector<unsigned char>> *PlacedPictures;
 std::vector<HBITMAP> *PicturesBitmaps;
 HBRUSH YellowBrush;
 Options options;
+UINT UPDATEPLS;
 #define _WE_WAS_HERE
 #endif
 

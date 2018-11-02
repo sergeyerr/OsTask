@@ -4,7 +4,7 @@
 #include <Windowsx.h>
 #include <tchar.h>
 #include <functional>
-
+#include "OsLabGlobals.h"
 int main(int argc, char *argv[]) {
 	std::function<void(void)> SavingFunc = CMD_Processor(argc, argv);
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
@@ -24,6 +24,12 @@ int main(int argc, char *argv[]) {
 	int b;
 	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
+		if (Msg.message == UPDATEPLS) {
+			int tmp = 0;
+			SyncWithSharedMemory();
+			DispatchMessage(&Msg);
+			continue;
+		}
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}
