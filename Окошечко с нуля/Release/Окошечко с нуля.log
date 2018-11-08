@@ -1,14 +1,7 @@
 ﻿  MultiProcessStoryTelling.cpp
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-  Service.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(33): warning C4101: 'Pic': unreferenced local variable
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(90): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
   Generating code
-  5 of 582 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    2 functions had inline decision re-evaluated but remain unchanged
+  All 583 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
   Finished generating code
   Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Release\Окошечко с нуля.exe

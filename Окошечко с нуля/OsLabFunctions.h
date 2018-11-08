@@ -32,5 +32,6 @@ void SaveBitMaps();
 void ManageSharedMemory(HWND handleWindow);
 void SaveToSharedMemory(int i, int j);
 void SyncWithSharedMemory(HWND handleWindow);
+void GoAwayFromSharedMemory();
 
 

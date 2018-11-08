@@ -131,6 +131,7 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
 	UnregisterClass(WindowClassName, HandleInstance);
+	GoAwayFromSharedMemory();
 }
 
 void OptionListHandler(std::vector<std::string> &optionsList) {

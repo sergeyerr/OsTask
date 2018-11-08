@@ -43,3 +43,12 @@ void SaveToSharedMemory(int i, int j) {
 	unsigned char tmp = (*PlacedPictures)[i][j];
 	VievOfMem[1 + i * options.m + j] = (*PlacedPictures)[i][j];
 }
+
+void GoAwayFromSharedMemory() {
+	VievOfMem[0]--;
+	if (VievOfMem[0] <= 0) {
+		std::cout << "It is last Process\n";
+		UnmapViewOfFile(VievOfMem);
+	    CloseHandle(hMapping);
+	}
+}
