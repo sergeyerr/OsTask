@@ -17,6 +17,10 @@ void RunNotepad()
 }
 
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam) {
+	if (msg == UPDATEPLS) {
+		SyncWithSharedMemory(handleWindow);
+		return DefWindowProc(handleWindow, msg, wParam, lParam);
+	}
 	switch (msg)
 	{
 	case WM_LBUTTONDOWN:
@@ -28,18 +32,12 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		if (x > options.m * options.CellSize || y > options.n * options.CellSize) break;
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
-		Pic = (*PicturesBitmaps)[std::rand() % PicturesBitmaps->size()];
-		bool found = false;
-		for (auto i = (*PlacedPictures).begin(); i != (*PlacedPictures).end();i++) {
-			auto elem = *i;
-			if (elem.first.first == x && elem.first.second == y) {
-			i->second = Pic;
-				found = true;
-				break;
-			}
-		}
-		if (!found) PlacedPictures->push_back({ { x, y }, Pic });
+		int picId = std::rand() % PicturesBitmaps->size();
+		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
 		InvalidateRect(handleWindow, NULL, TRUE);
+		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
+		//BroadcastSystemMessage(BSF_POSTMESSAGE,(LPDWORD) BSM_APPLICATIONS, UPDATEPLS, 0, 0);
+		PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
 	case WM_DESTROY:
@@ -102,22 +100,24 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
-	PlacedPictures = new std::vector<std::pair<std::pair<int, int>, HBITMAP>>();
+	PlacedPictures = new std::vector<std::vector<unsigned char>>(options.n, std::vector<unsigned char>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
 	if (!RegisterCustomClass(HandleInstance)) {
 		std::cout << "Can't register class";
 		return false;
 	};
-	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.first, options.WindowSize.second, NULL, NULL, HandleInstance, NULL);
+	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.first, options.WindowSize.second, HWND_DESKTOP, NULL, HandleInstance, NULL);
 	if (!WindowHandle) {
 		std::cout << "Can't create WindowHandle";
 		return false;
 	}
 	bool flag = true;
-	flag &= RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
-	flag &= RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
-	flag &= RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
-	flag &= RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
+	RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
+	RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
+	RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
+	ManageSharedMemory(WindowHandle);
 	return flag;
 }
 
@@ -131,6 +131,7 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
 	UnregisterClass(WindowClassName, HandleInstance);
+	GoAwayFromSharedMemory();
 }
 
 void OptionListHandler(std::vector<std::string> &optionsList) {
@@ -150,7 +151,8 @@ std::function<void(void)> CMD_Processor(int argc, char *argv[]) {
 		return 0;
 	}
 	if (argc == 1) {
-		options = Options();
+		ConfigureFromFileWinApi();
+		SavingFunc = SaveWithFileWinApi;
 	}
 	else {
 		if (std::string(argv[1]) == "stream") {
@@ -172,7 +174,8 @@ std::function<void(void)> CMD_Processor(int argc, char *argv[]) {
 		}
 		else {
 			std::cout << "Invalide argument\n";
-			options = Options();
+			ConfigureFromFileWinApi();
+			SavingFunc = SaveWithFileWinApi;
 		}
 	}
 	return SavingFunc;

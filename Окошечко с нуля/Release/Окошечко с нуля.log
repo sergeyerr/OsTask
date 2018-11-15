@@ -1,0 +1,7 @@
+﻿  MultiProcessStoryTelling.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(35): warning C4018: '<': signed/unsigned mismatch
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
+  Generating code
+  All 583 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Finished generating code
+  Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Release\Окошечко с нуля.exe

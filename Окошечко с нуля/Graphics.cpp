@@ -4,7 +4,7 @@
 void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic) {
 	HDC hdcMem = CreateCompatibleDC(handleDC);
 	HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, Pic);
-	BitBlt(handleDC, x - options.CellSize / 2, y - options.CellSize / 2, options.CellSize * 2, options.CellSize * 2, hdcMem, 0, 0, SRCCOPY);
+	BitBlt(handleDC, x , y , options.CellSize , options.CellSize , hdcMem, 0, 0, SRCCOPY);
 	SelectObject(hdcMem, oldBmp);
 	DeleteDC(hdcMem);
 	handleDC = NULL;
@@ -27,8 +27,11 @@ void GridAndCirclesPainting(HWND handleWindow) {
 		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
 		LineTo(handleDC, i  * options.CellSize, options.CellSize * options.n);
 	}
-	for (auto circle : *PlacedPictures) {
-		PaintCircle(handleDC, circle.first.first, circle.first.second, circle.second);
+	for (int i = 0; i < options.n; i++) {
+		for (int j = 0; j < options.m; j++) {
+			if ((*PlacedPictures)[i][j] == 255) continue;
+			PaintCircle(handleDC, j * options.CellSize, i * options.CellSize, (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
+		}
 	}
 	EndPaint(handleWindow, &paintStruct);
 	DeleteObject(handleDC);
