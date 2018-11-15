@@ -36,3 +36,27 @@ void GridAndCirclesPainting(HWND handleWindow) {
 	EndPaint(handleWindow, &paintStruct);
 	DeleteObject(handleDC);
 }
+
+void BackGroundPaint(HWND handleWindow, WPARAM wParam) {
+	HBRUSH	brush;
+	RECT windowRectangle;
+	int dR = 0, dG = 0, dB = 0;
+	WaitForSingleObject(BackColorMutex, INFINITE);
+	if (options.TargetColor.r > options.NowColor.r) dR = 1;
+	else if (options.TargetColor.r < options.NowColor.r) dR = -1;
+	if (options.TargetColor.g > options.NowColor.g) dG = 1;
+	else if (options.TargetColor.g < options.NowColor.g) dG = -1;
+	if (options.TargetColor.b > options.NowColor.b) dB = 1;
+	else if (options.TargetColor.b < options.NowColor.b) dB = -1;
+	ReleaseMutex(BackColorMutex);
+	options.NowColor.r += dR;
+	options.NowColor.g += dG;
+	options.NowColor.b += dB;
+	brush = CreateSolidBrush(RGB(options.NowColor.r, options.NowColor.g, options.NowColor.b));
+	SelectObject((HDC)wParam, brush);
+	GetClientRect(handleWindow, &windowRectangle);
+	options.WindowSize.first = windowRectangle.right - windowRectangle.left;
+	options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
+	Rectangle((HDC)wParam, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
+	DeleteObject(brush);
+}

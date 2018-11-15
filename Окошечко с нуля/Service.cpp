@@ -52,23 +52,20 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			RunNotepad();
 		}
 		else {
-			options.BackGroundColor = RGB(rand() % 256, rand() % 256, rand() % 256);
+			WaitForSingleObject(BackColorMutex, INFINITE);
+			options.TargetColor.r = rand() % 256;
+			options.TargetColor.g = rand() % 256;
+			options.TargetColor.b = rand() % 256;
+			ReleaseMutex(BackColorMutex);
 			InvalidateRect(handleWindow, NULL, TRUE);
+
 		}
 		break;
 	case WM_PAINT:
 		GridAndCirclesPainting(handleWindow);
 		break;
 	case WM_ERASEBKGND:
-		HBRUSH	brush;
-		RECT windowRectangle;
-		brush = CreateSolidBrush(options.BackGroundColor);
-		SelectObject((HDC)wParam, brush);
-		GetClientRect(handleWindow, &windowRectangle);
-		options.WindowSize.first = windowRectangle.right - windowRectangle.left;
-		options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
-		Rectangle((HDC)wParam, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
-		DeleteObject(brush);
+		BackGroundPaint(handleWindow , wParam);
 		break;
 	case WM_CLOSE:
 		DestroyWindow(handleWindow);
@@ -99,6 +96,7 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
+	BackColorMutex = CreateMutex(NULL, FALSE, NULL);
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
 	PlacedPictures = new std::vector<std::vector<unsigned char>>(options.n, std::vector<unsigned char>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
@@ -130,6 +128,7 @@ void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 	DestroyWindow(WindowHandle);
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
+	DeleteObject(BackColorMutex);
 	UnregisterClass(WindowClassName, HandleInstance);
 	GoAwayFromSharedMemory();
 }

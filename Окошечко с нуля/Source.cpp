@@ -24,7 +24,8 @@ int main(int argc, char *argv[]) {
 	int b;
 	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
-
+		if (!(options.NowColor == options.TargetColor)) 
+			InvalidateRect(WindowHandle, NULL, TRUE);
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}

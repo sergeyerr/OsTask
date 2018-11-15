@@ -140,6 +140,7 @@
     <ClCompile Include="Service.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ColorStruct.h" />
     <ClInclude Include="Options.h" />
     <ClInclude Include="OsLabFunctions.h" />
     <ClInclude Include="OsLabGlobals.h" />
