@@ -1,10 +1,3 @@
-﻿  Service.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(39): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(33): warning C4101: 'Pic': unreferenced local variable
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(87): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
-  Source.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(39): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+﻿  Graphics.cpp
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
   Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe

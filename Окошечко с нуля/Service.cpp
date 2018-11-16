@@ -62,7 +62,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	case WM_PAINT:
-		GridAndCirclesPainting(handleWindow);
+		//GridAndCirclesPainting(handleWindow);
 		break;
 	case WM_ERASEBKGND:
 		BackGroundPaint(handleWindow , wParam);
@@ -104,7 +104,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 		std::cout << "Can't register class";
 		return false;
 	};
-	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.first, options.WindowSize.second, HWND_DESKTOP, NULL, HandleInstance, NULL);
+	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
 	if (!WindowHandle) {
 		std::cout << "Can't create WindowHandle";
 		return false;
