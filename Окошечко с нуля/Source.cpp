@@ -5,6 +5,7 @@
 #include <tchar.h>
 #include <functional>
 #include "OsLabGlobals.h"
+#include <process.h>
 int main(int argc, char *argv[]) {
 	std::function<void(void)> SavingFunc = CMD_Processor(argc, argv);
 	HINSTANCE HandleInstance = GetModuleHandle(NULL);
@@ -20,11 +21,11 @@ int main(int argc, char *argv[]) {
 	SaveBitMaps();
 	std::cout << "Registration Succeeded!\n";
 	ShowWindow(HandleWindow, SW_SHOW);
+	_beginthread(BackGroundPaint, 0, NULL);
+	//SendMessage(HandleWindow, WM_SETREDRAW, FALSE, FALSE);
 	int b;
 	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{
-		if (!(options.NowColor == options.TargetColor)) 
-			InvalidateRect(HandleWindow, NULL, TRUE);
 		TranslateMessage(&Msg);
 		DispatchMessage(&Msg);
 	}

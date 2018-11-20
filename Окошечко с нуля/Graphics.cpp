@@ -14,9 +14,9 @@ void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic) {
 
 
 void GridAndCirclesPainting(void *) {
-	PAINTSTRUCT paintStruct;
 	RECT windowRectangle;
-	HDC handleDC = BeginPaint(HandleWindow, &paintStruct);
+	//PAINTSTRUCT paintStruct;
+	HDC handleDC = GetDC(HandleWindow);
 	SelectObject(handleDC, options.LinePen);
 	GetClientRect(HandleWindow, &windowRectangle);
 	for (int i = 0; i <  options.n + 1/*windowRectangle.bottom / options.CellSize + 1*/; i++) {
@@ -33,32 +33,47 @@ void GridAndCirclesPainting(void *) {
 			PaintCircle(handleDC, j * options.CellSize, i * options.CellSize, (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
 		}
 	}
-	EndPaint(HandleWindow, &paintStruct);
-	DeleteObject(handleDC);
+	ReleaseDC(HandleWindow, handleDC);
+	DeleteDC(handleDC);
 }
 
 void BackGroundPaint(void*) {
 	HBRUSH	brush;
 	RECT windowRectangle;
-	HDC handleDC = GetDC(HandleWindow);
-	int dR = 0, dG = 0, dB = 0;
-	WaitForSingleObject(BackColorMutex, INFINITE);
-	if (options.TargetColor.r > options.NowColor.r) dR = 1;
-	else if (options.TargetColor.r < options.NowColor.r) dR = -1;
-	if (options.TargetColor.g > options.NowColor.g) dG = 1;
-	else if (options.TargetColor.g < options.NowColor.g) dG = -1;
-	if (options.TargetColor.b > options.NowColor.b) dB = 1;
-	else if (options.TargetColor.b < options.NowColor.b) dB = -1;
-	ReleaseMutex(BackColorMutex);
-	options.NowColor.r += dR;
-	options.NowColor.g += dG;
-	options.NowColor.b += dB;
-	brush = CreateSolidBrush(RGB(options.NowColor.r, options.NowColor.g, options.NowColor.b));
-	SelectObject(handleDC, brush);
 	GetClientRect(HandleWindow, &windowRectangle);
-	options.WindowSize.first = windowRectangle.right - windowRectangle.left;
-	options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
-	Rectangle(handleDC, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
+	GridAndCirclesPainting(NULL);
+	while (true) {
+		Sleep(20);
+		HDC handleDC = GetDC(HandleWindow);
+		int dR = 0, dG = 0, dB = 0;
+		WaitForSingleObject(OptionsMutex, INFINITE);
+			if (options.TargetColor == options.NowColor) {
+				ReleaseMutex(OptionsMutex);
+				GridAndCirclesPainting(NULL);
+				continue;
+			}
+			if (options.TargetColor.r > options.NowColor.r) dR = 1;
+			else if (options.TargetColor.r < options.NowColor.r) dR = -1;
+			if (options.TargetColor.g > options.NowColor.g) dG = 1;
+			else if (options.TargetColor.g < options.NowColor.g) dG = -1;
+			if (options.TargetColor.b > options.NowColor.b) dB = 1;
+			else if (options.TargetColor.b < options.NowColor.b) dB = -1;
+			options.NowColor.r += dR;
+			options.NowColor.g += dG;
+			options.NowColor.b += dB;
+			options.WindowSize.first = windowRectangle.right - windowRectangle.left;
+			options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
+		ReleaseMutex(OptionsMutex);
+		brush = CreateSolidBrush(RGB(options.NowColor.r, options.NowColor.g, options.NowColor.b));
+		SelectObject(handleDC, brush);
+		GetClientRect(HandleWindow, &windowRectangle);
+		Rectangle(handleDC, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);
+		ReleaseDC(HandleWindow, handleDC);
+		//RedrawWindow(HandleWindow, FALSE, FALSE, RDW_VALIDATE);
+		//int a;
+		DeleteDC(handleDC);
+		GridAndCirclesPainting(NULL);
+		DeleteObject(brush);
+	}
 	DeleteObject(brush);
-	DeleteObject(handleDC);
 }

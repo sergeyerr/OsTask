@@ -13,7 +13,6 @@ void SyncWithSharedMemory(HWND handleWindow) {
 			(*PlacedPictures)[i][j] = VievOfMem[1 + i * options.m + j];
 		}
 	}
-	InvalidateRect(handleWindow, NULL, TRUE);
 }
 void ManageSharedMemory(HWND handleWindow) {
 	hMapping = OpenFileMapping(FILE_MAP_ALL_ACCESS,   FALSE, SharedMemName);

@@ -34,9 +34,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		HDC hDC = GetDC(handleWindow);
 		int picId = std::rand() % PicturesBitmaps->size();
 		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
-		InvalidateRect(handleWindow, NULL, TRUE);
 		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
-		//BroadcastSystemMessage(BSF_POSTMESSAGE,(LPDWORD) BSM_APPLICATIONS, UPDATEPLS, 0, 0);
 		PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
@@ -52,20 +50,14 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			RunNotepad();
 		}
 		else {
-			WaitForSingleObject(BackColorMutex, INFINITE);
+			WaitForSingleObject(OptionsMutex, INFINITE);
 			options.TargetColor.r = rand() % 256;
 			options.TargetColor.g = rand() % 256;
 			options.TargetColor.b = rand() % 256;
-			ReleaseMutex(BackColorMutex);
-			InvalidateRect(handleWindow, NULL, TRUE);
+			ReleaseMutex(OptionsMutex);
+			//InvalidateRect(handleWindow, NULL, TRUE);
 
 		}
-		break;
-	case WM_PAINT:
-		GridAndCirclesPainting(NULL);
-		break;
-	case WM_ERASEBKGND:
-		BackGroundPaint(NULL);
 		break;
 	case WM_CLOSE:
 		DestroyWindow(handleWindow);
@@ -96,7 +88,8 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
-	BackColorMutex = CreateMutex(NULL, FALSE, NULL);
+	OptionsMutex = CreateMutex(NULL, FALSE, NULL);
+	WindowMutex = CreateMutex(NULL, FALSE, NULL);
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
 	PlacedPictures = new std::vector<std::vector<unsigned char>>(options.n, std::vector<unsigned char>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
@@ -104,7 +97,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 		std::cout << "Can't register class";
 		return false;
 	};
-	HandleWindow = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
+	HandleWindow = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
 	if (!HandleWindow) {
 		std::cout << "Can't create WindowHandle";
 		return false;
@@ -128,7 +121,8 @@ void ClearAllStuff(HINSTANCE HandleInstance) {
 	DestroyWindow(HandleWindow);
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
-	DeleteObject(BackColorMutex);
+	DeleteObject(OptionsMutex);
+	DeleteObject(WindowMutex);
 	UnregisterClass(WindowClassName, HandleInstance);
 	GoAwayFromSharedMemory();
 }

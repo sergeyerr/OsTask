@@ -10,8 +10,9 @@ std::vector<HBITMAP> *PicturesBitmaps;
 HBRUSH YellowBrush;
 Options options;
 UINT UPDATEPLS;
-HANDLE BackColorMutex;
+HANDLE OptionsMutex;
 HWND HandleWindow;
+HANDLE WindowMutex;
 #define _WE_WAS_HERE
 #endif
 

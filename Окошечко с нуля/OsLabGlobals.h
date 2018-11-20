@@ -10,5 +10,6 @@ extern std::vector<std::vector<unsigned char>> *PlacedPictures;
 extern std::vector<HBITMAP> *PicturesBitmaps;
 extern HBRUSH YellowBrush;
 extern Options options;
-extern HANDLE BackColorMutex;
+extern HANDLE OptionsMutex;
+extern HANDLE WindowMutex;
 extern HWND HandleWindow;
