@@ -5,12 +5,12 @@
 
 //graphic
 void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic);
-void GridAndCirclesPainting(HWND handleWindow);
-void BackGroundPaint(HWND handleWindow, WPARAM wParam);
+void GridAndCirclesPainting(void *);
+void BackGroundPaint(void *);
 //service
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam);
-bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle);
-void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle);
+bool RegisterAllStuff(HINSTANCE HandleInstance);
+void ClearAllStuff(HINSTANCE HandleInstance);
 void RunNotepad();
 void OptionListHandler(std::vector<std::string> &optionsList);
 std::function<void(void)> CMD_Processor(int argc, char *argv[]);

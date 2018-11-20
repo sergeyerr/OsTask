@@ -62,10 +62,10 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	case WM_PAINT:
-		GridAndCirclesPainting(handleWindow);
+		GridAndCirclesPainting(NULL);
 		break;
 	case WM_ERASEBKGND:
-		BackGroundPaint(handleWindow , wParam);
+		BackGroundPaint(NULL);
 		break;
 	case WM_CLOSE:
 		DestroyWindow(handleWindow);
@@ -93,7 +93,7 @@ ATOM RegisterCustomClass(HINSTANCE HandleInstance) {
 	return RegisterClassEx(&wndClass);
 }
 
-bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
+bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	BackColorMutex = CreateMutex(NULL, FALSE, NULL);
@@ -104,28 +104,28 @@ bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
 		std::cout << "Can't register class";
 		return false;
 	};
-	WindowHandle = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
-	if (!WindowHandle) {
+	HandleWindow = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
+	if (!HandleWindow) {
 		std::cout << "Can't create WindowHandle";
 		return false;
 	}
 	bool flag = true;
-	RegisterHotKey(WindowHandle, 0, MOD_CONTROL, 0x51); //Q
-	RegisterHotKey(WindowHandle, 1, 0, VK_ESCAPE);
-	RegisterHotKey(WindowHandle, 2, MOD_SHIFT, 0x43); //C
-	RegisterHotKey(WindowHandle, 3, 0, VK_RETURN); //enter
+	RegisterHotKey(HandleWindow, 0, MOD_CONTROL, 0x51); //Q
+	RegisterHotKey(HandleWindow, 1, 0, VK_ESCAPE);
+	RegisterHotKey(HandleWindow, 2, MOD_SHIFT, 0x43); //C
+	RegisterHotKey(HandleWindow, 3, 0, VK_RETURN); //enter
 	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
-	ManageSharedMemory(WindowHandle);
+	ManageSharedMemory(HandleWindow);
 	return flag;
 }
 
-void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle) {
+void ClearAllStuff(HINSTANCE HandleInstance) {
 	DeleteObject(YellowBrush);
-	UnregisterHotKey(WindowHandle, 0);
-	UnregisterHotKey(WindowHandle, 1);
-	UnregisterHotKey(WindowHandle, 2);
-	UnregisterHotKey(WindowHandle, 3);
-	DestroyWindow(WindowHandle);
+	UnregisterHotKey(HandleWindow, 0);
+	UnregisterHotKey(HandleWindow, 1);
+	UnregisterHotKey(HandleWindow, 2);
+	UnregisterHotKey(HandleWindow, 3);
+	DestroyWindow(HandleWindow);
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
 	DeleteObject(BackColorMutex);

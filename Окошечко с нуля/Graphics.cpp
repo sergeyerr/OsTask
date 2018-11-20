@@ -13,12 +13,12 @@ void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic) {
 }
 
 
-void GridAndCirclesPainting(HWND handleWindow) {
+void GridAndCirclesPainting(void *) {
 	PAINTSTRUCT paintStruct;
 	RECT windowRectangle;
-	HDC handleDC = BeginPaint(handleWindow, &paintStruct);
+	HDC handleDC = BeginPaint(HandleWindow, &paintStruct);
 	SelectObject(handleDC, options.LinePen);
-	GetClientRect(handleWindow, &windowRectangle);
+	GetClientRect(HandleWindow, &windowRectangle);
 	for (int i = 0; i <  options.n + 1/*windowRectangle.bottom / options.CellSize + 1*/; i++) {
 		MoveToEx(handleDC, 0, i  * options.CellSize, NULL);
 		LineTo(handleDC, options.CellSize * options.m /*windowRectangle.right*/, i  * options.CellSize);
@@ -33,15 +33,14 @@ void GridAndCirclesPainting(HWND handleWindow) {
 			PaintCircle(handleDC, j * options.CellSize, i * options.CellSize, (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
 		}
 	}
-	EndPaint(handleWindow, &paintStruct);
+	EndPaint(HandleWindow, &paintStruct);
 	DeleteObject(handleDC);
 }
 
-void BackGroundPaint(HWND handleWindow, WPARAM wParam) {
+void BackGroundPaint(void*) {
 	HBRUSH	brush;
 	RECT windowRectangle;
-	
-	HDC handleDC = GetDC(handleWindow);
+	HDC handleDC = GetDC(HandleWindow);
 	int dR = 0, dG = 0, dB = 0;
 	WaitForSingleObject(BackColorMutex, INFINITE);
 	if (options.TargetColor.r > options.NowColor.r) dR = 1;
@@ -56,7 +55,7 @@ void BackGroundPaint(HWND handleWindow, WPARAM wParam) {
 	options.NowColor.b += dB;
 	brush = CreateSolidBrush(RGB(options.NowColor.r, options.NowColor.g, options.NowColor.b));
 	SelectObject(handleDC, brush);
-	GetClientRect(handleWindow, &windowRectangle);
+	GetClientRect(HandleWindow, &windowRectangle);
 	options.WindowSize.first = windowRectangle.right - windowRectangle.left;
 	options.WindowSize.second = windowRectangle.bottom - windowRectangle.top;
 	Rectangle(handleDC, windowRectangle.left, windowRectangle.top, windowRectangle.right, windowRectangle.bottom);

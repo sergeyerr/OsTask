@@ -11,6 +11,7 @@ HBRUSH YellowBrush;
 Options options;
 UINT UPDATEPLS;
 HANDLE BackColorMutex;
+HWND HandleWindow;
 #define _WE_WAS_HERE
 #endif
 
