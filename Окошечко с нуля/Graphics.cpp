@@ -1,7 +1,7 @@
 #pragma once
 #include "OsLabGlobals.h"
 #include <Windows.h>
-void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic) {
+void PaintPicture(HDC handleDC, int x, int y, HBITMAP Pic) {
 	HDC hdcMem = CreateCompatibleDC(handleDC);
 	HBITMAP oldBmp = (HBITMAP)SelectObject(hdcMem, Pic);
 	BitBlt(handleDC, x , y , options.CellSize , options.CellSize , hdcMem, 0, 0, SRCCOPY);
@@ -27,12 +27,14 @@ void GridAndCirclesPainting(void *) {
 		MoveToEx(handleDC, i  * options.CellSize, 0, NULL);
 		LineTo(handleDC, i  * options.CellSize, options.CellSize * options.n);
 	}
+	WaitForSingleObject(ClickMutex, INFINITE);
 	for (int i = 0; i < options.n; i++) {
 		for (int j = 0; j < options.m; j++) {
 			if ((*PlacedPictures)[i][j] == 255) continue;
-			PaintCircle(handleDC, j * options.CellSize, i * options.CellSize, (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
+			PaintPicture(handleDC, j * options.CellSize, i * options.CellSize, (*PicturesBitmaps)[(*PlacedPictures)[i][j]]);
 		}
 	}
+	ReleaseMutex(ClickMutex);
 	ReleaseDC(HandleWindow, handleDC);
 	DeleteDC(handleDC);
 }
@@ -43,7 +45,7 @@ void BackGroundPaint(void*) {
 	GetClientRect(HandleWindow, &windowRectangle);
 	GridAndCirclesPainting(NULL);
 	while (true) {
-		Sleep(20);
+		Sleep(30);
 		HDC handleDC = GetDC(HandleWindow);
 		int dR = 0, dG = 0, dB = 0;
 		WaitForSingleObject(OptionsMutex, INFINITE);

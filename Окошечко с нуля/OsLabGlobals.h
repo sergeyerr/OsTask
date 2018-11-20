@@ -11,5 +11,5 @@ extern std::vector<HBITMAP> *PicturesBitmaps;
 extern HBRUSH YellowBrush;
 extern Options options;
 extern HANDLE OptionsMutex;
-extern HANDLE WindowMutex;
+extern HANDLE ClickMutex;
 extern HWND HandleWindow;

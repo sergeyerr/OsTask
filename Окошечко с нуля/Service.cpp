@@ -33,8 +33,10 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
 		int picId = std::rand() % PicturesBitmaps->size();
+		WaitForSingleObject(ClickMutex, INFINITE);
 		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
 		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
+		ReleaseMutex(ClickMutex);
 		PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
@@ -89,7 +91,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	//options = Options();
 	std::srand(unsigned(std::time(0)));
 	OptionsMutex = CreateMutex(NULL, FALSE, NULL);
-	WindowMutex = CreateMutex(NULL, FALSE, NULL);
+	ClickMutex = CreateMutex(NULL, FALSE, NULL);
 	YellowBrush = CreateSolidBrush(RGB(255, 255, 0));
 	PlacedPictures = new std::vector<std::vector<unsigned char>>(options.n, std::vector<unsigned char>(options.m, -1));
 	PicturesBitmaps = new std::vector<HBITMAP>();
@@ -122,7 +124,7 @@ void ClearAllStuff(HINSTANCE HandleInstance) {
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);
 	DeleteObject(OptionsMutex);
-	DeleteObject(WindowMutex);
+	DeleteObject(ClickMutex);
 	UnregisterClass(WindowClassName, HandleInstance);
 	GoAwayFromSharedMemory();
 }

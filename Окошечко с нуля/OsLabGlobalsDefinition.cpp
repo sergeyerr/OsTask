@@ -12,7 +12,7 @@ Options options;
 UINT UPDATEPLS;
 HANDLE OptionsMutex;
 HWND HandleWindow;
-HANDLE WindowMutex;
+HANDLE ClickMutex;
 #define _WE_WAS_HERE
 #endif
 

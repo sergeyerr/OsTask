@@ -4,7 +4,7 @@
 #include <functional>
 
 //graphic
-void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic);
+void PaintPicture(HDC handleDC, int x, int y, HBITMAP Pic);
 void GridAndCirclesPainting(void *);
 void BackGroundPaint(void *);
 //service
