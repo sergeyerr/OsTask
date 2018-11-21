@@ -14,3 +14,4 @@ extern HANDLE OptionsMutex;
 extern HANDLE ClickMutex;
 extern HWND HandleWindow;
 extern HANDLE GraphicThread;
+extern int PlayerID;

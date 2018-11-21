@@ -1,11 +1,13 @@
 #pragma once
 #include "OsLabFunctions.h"
 #include <windowsx.h>
+#include <windows.h>
 #include <tchar.h>
 #include "OsLabGlobals.h"
 #include <ctime>
 #include <iostream>
 #include <functional>
+#include <mmsystem.h>
 const TCHAR* WindowClassName = _T("Mda");
 bool IsGraphicWorks = true;
 void RunNotepad()
@@ -33,11 +35,15 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		if (x > options.m * options.CellSize || y > options.n * options.CellSize) break;
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
-		int picId = std::rand() % PicturesBitmaps->size();
 		WaitForSingleObject(ClickMutex, INFINITE);
-		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = picId;
-		SaveToSharedMemory(y / options.CellSize, x / options.CellSize);
+		unsigned char save = (*PlacedPictures)[y / options.CellSize][x / options.CellSize];
+		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = PlayerID;
+		bool resOfClick = TrySaveToSharedMemory(y / options.CellSize, x / options.CellSize);
 		ReleaseMutex(ClickMutex);
+		if (!resOfClick) {
+			(*PlacedPictures)[y / options.CellSize][x / options.CellSize] =save; //BackToPrevVal
+		PlaySound(_T("kasp.wav"), NULL, SND_ASYNC | SND_FILENAME);
+		}
 		PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
@@ -152,7 +158,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	RegisterHotKey(HandleWindow, 6, 0, VK_F2);
 	RegisterHotKey(HandleWindow, 7, 0, VK_F3);
 	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
-	ManageSharedMemory(HandleWindow);
+	flag = ManageSharedMemory(HandleWindow);
 	return flag;
 }
 
