@@ -6,7 +6,7 @@
 //graphic
 void PaintPicture(HDC handleDC, int x, int y, HBITMAP Pic);
 void GridAndCirclesPainting(void *);
-void BackGroundPaint(void *);
+DWORD WINAPI BackGroundPaint(void *);
 //service
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam);
 bool RegisterAllStuff(HINSTANCE HandleInstance);

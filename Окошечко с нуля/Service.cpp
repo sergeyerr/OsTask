@@ -7,6 +7,7 @@
 #include <iostream>
 #include <functional>
 const TCHAR* WindowClassName = _T("Mda");
+bool IsGraphicWorks = true;
 void RunNotepad()
 {
 	STARTUPINFO sInfo;
@@ -44,21 +45,58 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		PostQuitMessage(0);
 		return 0;
 	case WM_HOTKEY:
-		if (wParam <= 1) {
+		switch (wParam) {
+		case 0:
+		case 1:
 			PostQuitMessage(0);
 			return 0;
-		}
-		else if (wParam == 2) {
+			break;
+		case 2:
 			RunNotepad();
-		}
-		else {
+			break;
+		case 3:
 			WaitForSingleObject(OptionsMutex, INFINITE);
 			options.TargetColor.r = rand() % 256;
 			options.TargetColor.g = rand() % 256;
 			options.TargetColor.b = rand() % 256;
 			ReleaseMutex(OptionsMutex);
-			//InvalidateRect(handleWindow, NULL, TRUE);
-
+			break;
+		case 4:
+			if (IsGraphicWorks) {
+				DWORD res = SuspendThread(GraphicThread);
+				IsGraphicWorks = false;
+				std::cout << "Graphics stopped\n";
+			}
+			else {
+				ResumeThread(GraphicThread);
+				IsGraphicWorks = true;
+				std::cout << "Graphics resumed\n";
+			}
+			break;
+		case 5:
+			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_IDLE)) {
+				std::cout << "ThreadPrior set to lowest\n";
+			}
+			else {
+				std::cout << "Failed to set priority\n";
+			}
+			break;
+		case 6:
+			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_NORMAL)) {
+				std::cout << "ThreadPrior set to normal\n";
+			}
+			else {
+				std::cout << "Failed to set priority\n";
+			}
+			break;
+		case 7:
+			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_HIGHEST)) {
+				std::cout << "ThreadPrior set to highest\n";
+			}
+			else {
+				std::cout << "Failed to set priority\n";
+			}
+			break;
 		}
 		break;
 	case WM_CLOSE:
@@ -109,6 +147,10 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	RegisterHotKey(HandleWindow, 1, 0, VK_ESCAPE);
 	RegisterHotKey(HandleWindow, 2, MOD_SHIFT, 0x43); //C
 	RegisterHotKey(HandleWindow, 3, 0, VK_RETURN); //enter
+	RegisterHotKey(HandleWindow, 4, 0, VK_SPACE);
+	RegisterHotKey(HandleWindow, 5, 0, VK_F1);
+	RegisterHotKey(HandleWindow, 6, 0, VK_F2);
+	RegisterHotKey(HandleWindow, 7, 0, VK_F3);
 	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
 	ManageSharedMemory(HandleWindow);
 	return flag;
@@ -120,6 +162,10 @@ void ClearAllStuff(HINSTANCE HandleInstance) {
 	UnregisterHotKey(HandleWindow, 1);
 	UnregisterHotKey(HandleWindow, 2);
 	UnregisterHotKey(HandleWindow, 3);
+	UnregisterHotKey(HandleWindow, 4);;
+	UnregisterHotKey(HandleWindow, 5);
+	UnregisterHotKey(HandleWindow, 6);
+	UnregisterHotKey(HandleWindow, 7);
 	DestroyWindow(HandleWindow);
 	DeleteObject(options.LinePen);
 	DeleteObject(options.BackgroundBrush);

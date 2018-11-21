@@ -13,6 +13,7 @@ UINT UPDATEPLS;
 HANDLE OptionsMutex;
 HWND HandleWindow;
 HANDLE ClickMutex;
+HANDLE GraphicThread;
 #define _WE_WAS_HERE
 #endif
 

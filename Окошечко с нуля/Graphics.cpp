@@ -39,7 +39,7 @@ void GridAndCirclesPainting(void *) {
 	DeleteDC(handleDC);
 }
 
-void BackGroundPaint(void*) {
+DWORD WINAPI BackGroundPaint(void*) {
 	HBRUSH	brush;
 	RECT windowRectangle;
 	GetClientRect(HandleWindow, &windowRectangle);
