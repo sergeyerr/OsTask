@@ -15,6 +15,7 @@ HWND HandleWindow;
 HANDLE ClickMutex;
 HANDLE GraphicThread;
 int PlayerID;
+UINT DIEPLS;
 #define _WE_WAS_HERE
 #endif
 

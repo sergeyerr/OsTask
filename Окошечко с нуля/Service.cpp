@@ -49,6 +49,10 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		SyncWithSharedMemory();
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
+	else if (msg == DIEPLS) {
+		PostQuitMessage(0);
+		return 0;
+	}
 	switch (msg)
 	{
 	case WM_LBUTTONDOWN:
@@ -66,7 +70,15 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = PlayerID;
 			TrySaveToSharedMemory(y / options.CellSize, x / options.CellSize);
 			bool gameres = CheckWinCondition(y / options.CellSize, x / options.CellSize);
-			if (gameres) std::cout << "MEMES";
+			if (gameres) {
+				ReleaseMutex(ClickMutex); // костылёк
+				PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
+				if (PlayerID == 0) 	MessageBox(HandleWindow, _T("First Player Won"), _T("GAME RESULT"), MB_OK);
+				else MessageBox(HandleWindow, _T("Second Player Won"), _T("GAME RESULT"), MB_OK);
+				PostMessage(HWND_BROADCAST, DIEPLS, 0, 0);
+				PostQuitMessage(0);
+				return 0;
+			}
 		}
 		else {
 			PlaySound(_T("kasp.wav"), NULL, SND_ASYNC | SND_FILENAME);
@@ -186,6 +198,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	RegisterHotKey(HandleWindow, 6, 0, VK_F2);
 	RegisterHotKey(HandleWindow, 7, 0, VK_F3);
 	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
+	DIEPLS = RegisterWindowMessage(_T("Die123"));
 	flag = ManageSharedMemory();
 	return flag;
 }
