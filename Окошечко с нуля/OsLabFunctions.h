@@ -29,9 +29,10 @@ void SaveWithFileWinApi();
 void SaveBitMaps();
 
 //MultiProcess
-bool ManageSharedMemory(HWND handleWindow);
+bool ManageSharedMemory();
 bool TrySaveToSharedMemory(int i, int j);
-void SyncWithSharedMemory(HWND handleWindow);
+void SyncWithSharedMemory();
 void GoAwayFromSharedMemory();
+bool IsItPlayerIDTurn();
 
 

@@ -19,9 +19,34 @@ void RunNotepad()
 		NULL, NULL, NULL, FALSE, 0, NULL, NULL, &sInfo, &pInfo);
 }
 
+bool CheckWinCondition(int y, int x) {
+	bool res = false;
+	bool tres = true;
+	for (int i = 0; i < options.n; i++) {
+		if ((*PlacedPictures)[i][x] != PlayerID) tres = false; // vert
+	}
+	res |= tres;
+	tres = true;
+	for (int i = 0; i < options.n; i++) {
+		if ((*PlacedPictures)[y][i] != PlayerID)tres = false; // goriz
+	}
+	res |= tres;
+	tres = true;
+	for (int i = 0; i < options.n; i++) {
+		if ((*PlacedPictures)[i][i] != PlayerID)tres = false; // mainD
+	}
+	res |= tres;
+	tres = true;
+	for (int i = 0; i < options.n; i++) {
+		if ((*PlacedPictures)[i][options.n - i - 1] != PlayerID) tres = false; // secondD
+	}
+	res |= tres;
+	return res;
+}
+
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam) {
 	if (msg == UPDATEPLS) {
-		SyncWithSharedMemory(handleWindow);
+		SyncWithSharedMemory();
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
 	switch (msg)
@@ -36,14 +61,17 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		HBITMAP Pic;
 		HDC hDC = GetDC(handleWindow);
 		WaitForSingleObject(ClickMutex, INFINITE);
-		unsigned char save = (*PlacedPictures)[y / options.CellSize][x / options.CellSize];
-		(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = PlayerID;
-		bool resOfClick = TrySaveToSharedMemory(y / options.CellSize, x / options.CellSize);
-		ReleaseMutex(ClickMutex);
-		if (!resOfClick) {
-			(*PlacedPictures)[y / options.CellSize][x / options.CellSize] =save; //BackToPrevVal
-		PlaySound(_T("kasp.wav"), NULL, SND_ASYNC | SND_FILENAME);
+		bool isItMyTurn = IsItPlayerIDTurn();
+		if (isItMyTurn && (*PlacedPictures)[y / options.CellSize][x / options.CellSize] == 255) {
+			(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = PlayerID;
+			TrySaveToSharedMemory(y / options.CellSize, x / options.CellSize);
+			bool gameres = CheckWinCondition(y / options.CellSize, x / options.CellSize);
+			if (gameres) std::cout << "MEMES";
 		}
+		else {
+			PlaySound(_T("kasp.wav"), NULL, SND_ASYNC | SND_FILENAME);
+		}
+		ReleaseMutex(ClickMutex);
 		PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 		break;
 	};
@@ -158,7 +186,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 	RegisterHotKey(HandleWindow, 6, 0, VK_F2);
 	RegisterHotKey(HandleWindow, 7, 0, VK_F3);
 	UPDATEPLS = RegisterWindowMessage(_T("Update123"));
-	flag = ManageSharedMemory(HandleWindow);
+	flag = ManageSharedMemory();
 	return flag;
 }
 
