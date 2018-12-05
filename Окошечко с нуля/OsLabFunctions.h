@@ -12,6 +12,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 bool RegisterAllStuff(HINSTANCE HandleInstance);
 void ClearAllStuff(HINSTANCE HandleInstance);
 void RunNotepad();
+void RunSecondPlayer();
 void OptionListHandler(std::vector<std::string> &optionsList);
 DWORD WINAPI BackGroundUpdater(void*);
 std::function<void(void)> CMD_Processor(int argc, char *argv[]);

@@ -1,21 +1,6 @@
-﻿  FileWorking.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-  Graphics.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-  MultiProcessStoryTelling.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-  OsLabGlobalsDefinition.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-  SaveBitMaps.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (Окошечко с нуля.vcxproj).  This can lead to incorrect clean and rebuild behavior.
   Service.cpp
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
 c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(170): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
-  Source.cpp
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\oslabfunctions.h(3): warning C4067: unexpected tokens following preprocessor directive - expected a newline
-c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\options.h(41): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
-  Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\Окошечко с нуля.exe
+c:\users\sergey\desktop\prog trash\окошечко с нуля\окошечко с нуля\service.cpp(188): warning C4302: 'type cast': truncation from 'LPWSTR' to 'WORD'
+  Окошечко с нуля.vcxproj -> C:\Users\Sergey\Desktop\prog trash\Окошечко с нуля\Debug\perfectGame.exe

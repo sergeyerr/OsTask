@@ -22,6 +22,7 @@ int main(int argc, char *argv[]) {
 	std::cout << "Registration Succeeded!\n";
 	ShowWindow(HandleWindow, SW_SHOW);
 	BackGroundUpdateThread = CreateThread(NULL, 0, &BackGroundUpdater, NULL, 0, NULL);
+	RunSecondPlayer();
 	int b;
 	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

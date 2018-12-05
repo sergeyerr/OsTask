@@ -19,7 +19,16 @@ void RunNotepad()
 		NULL, NULL, NULL, FALSE, 0, NULL, NULL, &sInfo, &pInfo);
 }
 
-bool CheckWinCondition(int y, int x) {
+void RunSecondPlayer()
+{
+	STARTUPINFO sInfo;
+	PROCESS_INFORMATION pInfo;
+	ZeroMemory(&sInfo, sizeof(STARTUPINFO));
+	CreateProcess(_T(".\\perfectGame.exe"),
+		NULL, NULL, NULL, FALSE, 0, NULL, NULL, &sInfo, &pInfo);
+}
+
+int CheckWinCondition(int y, int x) {
 	bool res = false;
 	bool tres = true;
 	for (int i = 0; i < options.n; i++) {
@@ -41,6 +50,13 @@ bool CheckWinCondition(int y, int x) {
 		if ((*PlacedPictures)[i][options.n - i - 1] != PlayerID) tres = false; // secondD
 	}
 	res |= tres;
+	bool isAnyFree = false;
+	for (int i = 0; i < options.n; i++) {
+		for (int j = 0; j < options.n; j++) {
+			if ((*PlacedPictures)[i][j] == 255) isAnyFree = true; // mainD
+		}
+	}
+	if (!res && !isAnyFree) return 2;
 	return res;
 }
 
@@ -53,6 +69,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		if (IsItPlayerIDTurn()) PostQuitMessage(0);
 		return 0;
 	}
+
 	switch (msg)
 	{
 	case WM_LBUTTONDOWN:
@@ -68,12 +85,13 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		if (isItMyTurn && (*PlacedPictures)[y / options.CellSize][x / options.CellSize] == 255) {
 			(*PlacedPictures)[y / options.CellSize][x / options.CellSize] = PlayerID;
 			TrySaveToSharedMemory(y / options.CellSize, x / options.CellSize);
-			bool gameres = CheckWinCondition(y / options.CellSize, x / options.CellSize);
+			int gameres = CheckWinCondition(y / options.CellSize, x / options.CellSize);
 			if (gameres) {
-				ReleaseMutex(ClickMutex); // костылёк
-				PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
+				ReleaseMutex(ClickMutex);
+				//PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
 				PostMessage(HWND_BROADCAST, DIEPLS, 0, 0);
-				if (PlayerID == 0) 	MessageBox(handleWindow, _T("First Player Won"), _T("GAME RESULT"), MB_OK);
+				if (gameres == 2) MessageBox(handleWindow, _T("DRAW"), _T("GAME RESULT"), MB_OK);
+				else if (PlayerID == 0) 	MessageBox(handleWindow, _T("First Player Won"), _T("GAME RESULT"), MB_OK);
 				else MessageBox(handleWindow, _T("Second Player Won"), _T("GAME RESULT"), MB_OK);
 				PostQuitMessage(0);
 				return 0;
@@ -145,7 +163,6 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	case WM_CLOSE:
-		PostMessage(HWND_BROADCAST, DIEPLS, 0, 0);
 		DestroyWindow(handleWindow);
 		break;
 	case WM_PAINT:

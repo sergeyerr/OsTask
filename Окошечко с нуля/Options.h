@@ -20,7 +20,7 @@ public:
 		n = 100;
 		m = 200;
 		CellSize = 30;
-		WindowSize = { n * CellSize + 100,m * CellSize + 100 };
+		WindowSize = { n * CellSize + 200,m * CellSize + 200 };
 		TargetColor = NowColor = { 0, 0, 255 };
 		PenColor = RGB(220, 20, 60);
 		LinePen = CreatePen(PS_SOLID, 1, PenColor);
@@ -32,7 +32,7 @@ public:
 		n = std::stoi(input[input.size() - 2]);
 		m = std::stoi(input[input.size() - 1]);
 		CellSize = std::stoi(input[2]);
-		WindowSize = { n * CellSize + 100,m * CellSize + 100 };
+		WindowSize = { n * CellSize + 200,m * CellSize + 200 };
 		PenColor = RGB(std::stoi(input[3]), std::stoi(input[4]), std::stoi(input[5]));
 		LinePen = CreatePen(PS_SOLID, 1, PenColor);
 		TargetColor = NowColor = { std::stoi(input[6]), std::stoi(input[7]), std::stoi(input[8]) };
