@@ -13,7 +13,7 @@ UINT UPDATEPLS;
 HANDLE OptionsMutex;
 HWND HandleWindow;
 HANDLE ClickMutex;
-HANDLE GraphicThread;
+HANDLE BackGroundUpdateThread;
 int PlayerID;
 UINT DIEPLS;
 #define _WE_WAS_HERE

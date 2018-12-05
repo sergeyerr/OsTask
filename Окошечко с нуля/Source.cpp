@@ -21,7 +21,7 @@ int main(int argc, char *argv[]) {
 	SaveBitMaps();
 	std::cout << "Registration Succeeded!\n";
 	ShowWindow(HandleWindow, SW_SHOW);
-	GraphicThread =  CreateThread(NULL, 0, &BackGroundPaint, NULL, 0, NULL);
+	BackGroundUpdateThread = CreateThread(NULL, 0, &BackGroundUpdater, NULL, 0, NULL);
 	int b;
 	while (b = GetMessage(&Msg, NULL, 0, 0) > 0)
 	{

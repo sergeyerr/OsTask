@@ -35,6 +35,7 @@ void SyncWithSharedMemory() {
 		}
 	}
 	SyncWindowText();
+	InvalidateRect(HandleWindow, NULL, TRUE);
 }
 
 bool ManageSharedMemory() {

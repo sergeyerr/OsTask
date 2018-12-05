@@ -5,14 +5,15 @@
 
 //graphic
 void PaintPicture(HDC handleDC, int x, int y, HBITMAP Pic);
-void GridAndCirclesPainting(void *);
-DWORD WINAPI BackGroundPaint(void *);
+void GridAndCirclesPainting(HWND handleWindow);
+void BackGroundPaint(HWND handleWindow, WPARAM wParam);
 //service
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam);
 bool RegisterAllStuff(HINSTANCE HandleInstance);
 void ClearAllStuff(HINSTANCE HandleInstance);
 void RunNotepad();
 void OptionListHandler(std::vector<std::string> &optionsList);
+DWORD WINAPI BackGroundUpdater(void*);
 std::function<void(void)> CMD_Processor(int argc, char *argv[]);
 
 //file Working

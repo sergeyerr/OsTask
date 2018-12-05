@@ -50,7 +50,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
 	}
 	else if (msg == DIEPLS) {
-		PostQuitMessage(0);
+		if (IsItPlayerIDTurn()) PostQuitMessage(0);
 		return 0;
 	}
 	switch (msg)
@@ -62,8 +62,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		x = x - x % options.CellSize + options.CellSize / 2;
 		y = y - y % options.CellSize + options.CellSize / 2;
 		if (x > options.m * options.CellSize || y > options.n * options.CellSize) break;
-		HBITMAP Pic;
-		HDC hDC = GetDC(handleWindow);
+		InvalidateRect(handleWindow, NULL, TRUE);
 		WaitForSingleObject(ClickMutex, INFINITE);
 		bool isItMyTurn = IsItPlayerIDTurn();
 		if (isItMyTurn && (*PlacedPictures)[y / options.CellSize][x / options.CellSize] == 255) {
@@ -73,9 +72,9 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			if (gameres) {
 				ReleaseMutex(ClickMutex); // костылёк
 				PostMessage(HWND_BROADCAST, UPDATEPLS, 0, 0);
-				if (PlayerID == 0) 	MessageBox(HandleWindow, _T("First Player Won"), _T("GAME RESULT"), MB_OK);
-				else MessageBox(HandleWindow, _T("Second Player Won"), _T("GAME RESULT"), MB_OK);
 				PostMessage(HWND_BROADCAST, DIEPLS, 0, 0);
+				if (PlayerID == 0) 	MessageBox(handleWindow, _T("First Player Won"), _T("GAME RESULT"), MB_OK);
+				else MessageBox(handleWindow, _T("Second Player Won"), _T("GAME RESULT"), MB_OK);
 				PostQuitMessage(0);
 				return 0;
 			}
@@ -109,18 +108,18 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			break;
 		case 4:
 			if (IsGraphicWorks) {
-				DWORD res = SuspendThread(GraphicThread);
+				DWORD res = SuspendThread(BackGroundUpdateThread);
 				IsGraphicWorks = false;
 				std::cout << "Graphics stopped\n";
 			}
 			else {
-				ResumeThread(GraphicThread);
+				ResumeThread(BackGroundUpdateThread);
 				IsGraphicWorks = true;
 				std::cout << "Graphics resumed\n";
 			}
 			break;
 		case 5:
-			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_IDLE)) {
+			if (SetThreadPriority(BackGroundUpdateThread, THREAD_PRIORITY_IDLE)) {
 				std::cout << "ThreadPrior set to lowest\n";
 			}
 			else {
@@ -128,7 +127,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			}
 			break;
 		case 6:
-			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_NORMAL)) {
+			if (SetThreadPriority(BackGroundUpdateThread, THREAD_PRIORITY_NORMAL)) {
 				std::cout << "ThreadPrior set to normal\n";
 			}
 			else {
@@ -136,7 +135,7 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 			}
 			break;
 		case 7:
-			if (SetThreadPriority(GraphicThread, THREAD_PRIORITY_HIGHEST)) {
+			if (SetThreadPriority(BackGroundUpdateThread, THREAD_PRIORITY_HIGHEST)) {
 				std::cout << "ThreadPrior set to highest\n";
 			}
 			else {
@@ -146,7 +145,14 @@ LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lPar
 		}
 		break;
 	case WM_CLOSE:
+		PostMessage(HWND_BROADCAST, DIEPLS, 0, 0);
 		DestroyWindow(handleWindow);
+		break;
+	case WM_PAINT:
+		GridAndCirclesPainting(handleWindow);
+		break;
+	case WM_ERASEBKGND:
+		BackGroundPaint(handleWindow, wParam);
 		break;
 	default:
 		return DefWindowProc(handleWindow, msg, wParam, lParam);
@@ -183,7 +189,7 @@ bool RegisterAllStuff(HINSTANCE HandleInstance) {
 		std::cout << "Can't register class";
 		return false;
 	};
-	HandleWindow = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"), WS_SYSMENU, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
+	HandleWindow = CreateWindowEx(WS_EX_CLIENTEDGE, WindowClassName, _T("My Window"),WS_OVERLAPPEDWINDOW, CW_USEDEFAULT, CW_USEDEFAULT, options.WindowSize.second, options.WindowSize.first, HWND_DESKTOP, NULL, HandleInstance, NULL);
 	if (!HandleWindow) {
 		std::cout << "Can't create WindowHandle";
 		return false;
@@ -267,4 +273,27 @@ std::function<void(void)> CMD_Processor(int argc, char *argv[]) {
 		}
 	}
 	return SavingFunc;
+}
+
+DWORD WINAPI BackGroundUpdater(void*) {
+	while (true) {
+		Sleep(30);
+		int dR = 0, dG = 0, dB = 0;
+		WaitForSingleObject(OptionsMutex, INFINITE);
+		if (options.TargetColor == options.NowColor) {
+			ReleaseMutex(OptionsMutex);
+			continue;
+		}
+		if (options.TargetColor.r > options.NowColor.r) dR = 1;
+		else if (options.TargetColor.r < options.NowColor.r) dR = -1;
+		if (options.TargetColor.g > options.NowColor.g) dG = 1;
+		else if (options.TargetColor.g < options.NowColor.g) dG = -1;
+		if (options.TargetColor.b > options.NowColor.b) dB = 1;
+		else if (options.TargetColor.b < options.NowColor.b) dB = -1;
+		options.NowColor.r += dR;
+		options.NowColor.g += dG;
+		options.NowColor.b += dB;
+		ReleaseMutex(OptionsMutex);
+		InvalidateRect(HandleWindow, NULL, TRUE);
+	}
 }
