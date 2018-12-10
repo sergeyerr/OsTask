@@ -4,15 +4,17 @@
 #include <functional>
 
 //graphic
-void PaintCircle(HDC handleDC, int x, int y, HBITMAP Pic);
+void PaintPicture(HDC handleDC, int x, int y, HBITMAP Pic);
 void GridAndCirclesPainting(HWND handleWindow);
-
+void BackGroundPaint(HWND handleWindow, WPARAM wParam);
 //service
 LRESULT CALLBACK WndProc(HWND handleWindow, UINT msg, WPARAM wParam, LPARAM lParam);
-bool RegisterAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle);
-void ClearAllStuff(HINSTANCE HandleInstance, HWND &WindowHandle);
+bool RegisterAllStuff(HINSTANCE HandleInstance);
+void ClearAllStuff(HINSTANCE HandleInstance);
 void RunNotepad();
+void RunSecondPlayer();
 void OptionListHandler(std::vector<std::string> &optionsList);
+DWORD WINAPI BackGroundUpdater(void*);
 std::function<void(void)> CMD_Processor(int argc, char *argv[]);
 
 //file Working
@@ -29,9 +31,10 @@ void SaveWithFileWinApi();
 void SaveBitMaps();
 
 //MultiProcess
-void ManageSharedMemory(HWND handleWindow);
-void SaveToSharedMemory(int i, int j);
-void SyncWithSharedMemory(HWND handleWindow);
+bool ManageSharedMemory();
+bool TrySaveToSharedMemory(int i, int j);
+void SyncWithSharedMemory();
 void GoAwayFromSharedMemory();
+bool IsItPlayerIDTurn();
 
 
